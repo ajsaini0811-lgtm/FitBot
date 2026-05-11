@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendOtpEmail(email, name, otp) {
   const { data, error } = await resend.emails.send({
-    from: 'FitBot <onboarding@resend.dev>',
+    from: 'FitBot <hello@fitbot.life>',
     to: email,
     subject: 'Your FitBot Verification Code',
     html: `
@@ -37,7 +37,7 @@ async function sendOtpEmail(email, name, otp) {
 async function sendWeeklyReminder(email, name) {
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   const { data, error } = await resend.emails.send({
-    from: 'FitBot <onboarding@resend.dev>',
+    from: 'FitBot <hello@fitbot.life>',
     to: email,
     subject: '💪 Time to log your weight, ' + name + '!',
     html: `
