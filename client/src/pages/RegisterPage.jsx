@@ -108,7 +108,7 @@ export default function RegisterPage() {
         <form onSubmit={handleRegister}>
           <div className="form-group">
             <label className="form-label">Full Name</label>
-            <input className="form-input" placeholder="Ajay Saini" required
+            <input className="form-input" placeholder="Your full name" required
               value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
           </div>
           <div className="form-group">
