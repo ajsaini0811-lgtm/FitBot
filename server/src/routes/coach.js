@@ -331,4 +331,61 @@ router.delete('/diets/:id', async (req, res) => {
   }
 });
 
+// ── Custom Exercises ─────────────────────────────────────────
+
+// GET /api/coach/exercises — list this coach's custom exercises
+router.get('/exercises', async (req, res) => {
+  try {
+    const exercises = await prisma.customExercise.findMany({
+      where: { coachId: req.user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(exercises);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/coach/exercises — create a custom exercise
+router.post('/exercises', async (req, res) => {
+  try {
+    const { name, cat, muscle, bodyPart, difficulty, equipment, instructions, tips, defaultSets, defaultReps } = req.body;
+    if (!name || !cat || !muscle || !bodyPart || !difficulty || !equipment) {
+      return res.status(400).json({ error: 'Name, category, muscle, bodyPart, difficulty and equipment are required' });
+    }
+    const exercise = await prisma.customExercise.create({
+      data: {
+        coachId: req.user.id,
+        name: name.trim(),
+        cat,
+        muscle: muscle.trim(),
+        bodyPart,
+        difficulty,
+        equipment,
+        instructions: Array.isArray(instructions) ? instructions.filter(Boolean) : [],
+        tips: Array.isArray(tips) ? tips.filter(Boolean) : [],
+        defaultSets: defaultSets ? Number(defaultSets) : null,
+        defaultReps: defaultReps || null,
+      },
+    });
+    res.status(201).json(exercise);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /api/coach/exercises/:id — delete a custom exercise
+router.delete('/exercises/:id', async (req, res) => {
+  try {
+    const ex = await prisma.customExercise.findFirst({
+      where: { id: req.params.id, coachId: req.user.id },
+    });
+    if (!ex) return res.status(404).json({ error: 'Exercise not found' });
+    await prisma.customExercise.delete({ where: { id: ex.id } });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -57,6 +57,9 @@ model User {
   sentMessages     CoachMessage[] @relation("SentMessages")
   receivedMessages CoachMessage[] @relation("ReceivedMessages")
 
+  // Coach custom exercises
+  customExercises  CustomExercise[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -215,6 +218,25 @@ model DietPlanMeal {
   foods    String
   calories Int
   notes    String?
+}
+
+// ─── Coach Custom Exercises ───────────────────────────────
+
+model CustomExercise {
+  id           String   @id @default(cuid())
+  coachId      String
+  coach        User     @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  name         String
+  cat          String   // "strength" | "cardio" | "flexibility"
+  muscle       String   // e.g. "chest", "back", "legs"
+  bodyPart     String   // e.g. "chest", "back", "legs", "core"
+  difficulty   String   // "beginner" | "intermediate" | "advanced"
+  equipment    String   // "barbell" | "dumbbell" | "bodyweight" | "machine" | "cable" | "other"
+  instructions String[] // step-by-step
+  tips         String[]
+  defaultSets  Int?
+  defaultReps  String?
+  createdAt    DateTime @default(now())
 }
 
 // ─── Coach ↔ User Messaging ───────────────────────────────
