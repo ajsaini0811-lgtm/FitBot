@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
-import { FiUsers, FiPlus, FiTrash2, FiMessageCircle, FiClipboard, FiCoffee, FiChevronRight, FiUserPlus } from 'react-icons/fi';
+import { FiUsers, FiPlus, FiTrash2, FiMessageCircle, FiClipboard, FiCoffee, FiChevronRight, FiUserPlus, FiSearch } from 'react-icons/fi';
 import './CoachDashboard.css';
 
 export default function CoachDashboard() {
@@ -11,9 +11,12 @@ export default function CoachDashboard() {
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [addEmail, setAddEmail] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
   const [adding, setAdding] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const searchTimeout = useRef(null);
 
   useEffect(() => {
     fetchClients();
@@ -30,14 +33,32 @@ export default function CoachDashboard() {
     }
   }
 
-  async function handleAddClient(e) {
-    e.preventDefault();
-    if (!addEmail.trim()) return;
+  function handleSearchChange(e) {
+    const q = e.target.value;
+    setSearchQuery(q);
+    setSearchResults([]);
+    clearTimeout(searchTimeout.current);
+    if (q.trim().length < 1) return;
+    searchTimeout.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const { data } = await api.get(`/coach/search-users?q=${encodeURIComponent(q.trim())}`);
+        setSearchResults(data);
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
+  }
+
+  async function handleAddClient(selectedUser) {
     setAdding(true);
     try {
-      const { data } = await api.post('/coach/clients/add', { email: addEmail.trim() });
+      const { data } = await api.post('/coach/clients/add', { email: selectedUser.email });
       toast.success(`${data.client.name} added as a client!`);
-      setAddEmail('');
+      setSearchQuery('');
+      setSearchResults([]);
       setShowAddForm(false);
       fetchClients();
     } catch (err) {
@@ -75,23 +96,43 @@ export default function CoachDashboard() {
 
       {/* Add Client Form */}
       {showAddForm && (
-        <form className="coach-add-form card" onSubmit={handleAddClient}>
+        <div className="coach-add-form card">
           <h3 className="coach-add-title">Add a new client</h3>
-          <p className="coach-add-sub">Enter the email address the client registered with.</p>
-          <div className="coach-add-row">
-            <input
-              className="form-input"
-              type="email"
-              placeholder="client@email.com"
-              value={addEmail}
-              onChange={e => setAddEmail(e.target.value)}
-              required
-            />
-            <button className="btn btn-primary" type="submit" disabled={adding}>
-              {adding ? 'Adding…' : 'Add'}
-            </button>
+          <p className="coach-add-sub">Search by name to find and add a client.</p>
+          <div className="coach-search-wrap">
+            <div className="coach-search-input-row">
+              <FiSearch size={16} className="coach-search-icon" />
+              <input
+                className="form-input coach-search-input"
+                type="text"
+                placeholder="Type a name, e.g. Ajay…"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                autoFocus
+              />
+              {searching && <div className="coach-search-spinner" />}
+            </div>
+            {searchResults.length > 0 && (
+              <div className="coach-search-results">
+                {searchResults.map(u => (
+                  <div key={u.id} className="coach-search-result-item" onClick={() => !adding && handleAddClient(u)}>
+                    <div className="csr-avatar">{u.name.charAt(0).toUpperCase()}</div>
+                    <div className="csr-info">
+                      <div className="csr-name">{u.name}</div>
+                      <div className="csr-email">{u.email}</div>
+                    </div>
+                    <button className="btn btn-primary btn-sm csr-add-btn" disabled={adding}>
+                      {adding ? '…' : '+ Add'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {searchQuery.trim().length > 0 && !searching && searchResults.length === 0 && (
+              <div className="coach-search-empty">No users found matching "{searchQuery}"</div>
+            )}
           </div>
-        </form>
+        </div>
       )}
 
       {/* Stats row */}

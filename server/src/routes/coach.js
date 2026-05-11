@@ -86,6 +86,30 @@ router.post('/clients/add', async (req, res) => {
   }
 });
 
+// GET /api/coach/search-users?q=AJ  — search users by name to add as client
+router.get('/search-users', async (req, res) => {
+  try {
+    const q = (req.query.q || '').trim();
+    if (q.length < 1) return res.json([]);
+
+    const users = await prisma.user.findMany({
+      where: {
+        name: { startsWith: q, mode: 'insensitive' },
+        role: 'USER',
+        coachId: null,          // not already assigned to a coach
+        id: { not: req.user.id }, // not the coach themselves
+        setupDone: true,
+      },
+      select: { id: true, name: true, email: true },
+      take: 8,
+      orderBy: { name: 'asc' },
+    });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // DELETE /api/coach/clients/:clientId
 router.delete('/clients/:clientId', async (req, res) => {
   try {
