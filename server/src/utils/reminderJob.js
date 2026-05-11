@@ -1,10 +1,10 @@
 const cron = require('node-cron');
 const { PrismaClient } = require('@prisma/client');
-const { sendWeeklyReminder } = require('./mailer');
+const { sendWeeklyReminder, sendCheckinReminder } = require('./mailer');
 
 const prisma = new PrismaClient();
 
-// Every Sunday at 9:00 AM
+// ── Weekly weight reminder — every Sunday at 9 AM ──────────
 cron.schedule('0 9 * * 0', async () => {
   console.log('⏰ Running weekly weight reminder job...');
   try {
@@ -22,18 +22,52 @@ cron.schedule('0 9 * * 0', async () => {
       select: { email: true, name: true },
     });
 
-    console.log(`📧 Sending reminders to ${users.length} user(s)...`);
+    console.log(`📧 Sending weight reminders to ${users.length} user(s)...`);
     for (const user of users) {
       try {
         await sendWeeklyReminder(user.email, user.name);
-        console.log(`✅ Reminder sent to ${user.email}`);
+        console.log(`✅ Weight reminder sent to ${user.email}`);
       } catch (err) {
-        console.error(`❌ Failed to send reminder to ${user.email}:`, err.message);
+        console.error(`❌ Failed to send weight reminder to ${user.email}:`, err.message);
       }
     }
   } catch (err) {
-    console.error('❌ Reminder job failed:', err.message);
+    console.error('❌ Weight reminder job failed:', err.message);
   }
 });
 
-console.log('⏰ Weekly reminder cron job scheduled (Sundays 9 AM)');
+// ── Daily check-in reminders — every day at 8 AM ──────────
+cron.schedule('0 8 * * *', async () => {
+  const todayDay = new Date().getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  console.log(`⏰ Running check-in reminders for day ${todayDay}...`);
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        setupDone: true,
+        role: 'USER',
+        checkinDay: todayDay,
+        coachId: { not: null },
+      },
+      select: {
+        email: true,
+        name: true,
+        coach: { select: { name: true } },
+      },
+    });
+
+    console.log(`📧 Sending check-in reminders to ${users.length} user(s)...`);
+    for (const user of users) {
+      try {
+        await sendCheckinReminder(user.email, user.name, user.coach?.name || 'your coach');
+        console.log(`✅ Check-in reminder sent to ${user.email}`);
+      } catch (err) {
+        console.error(`❌ Failed to send check-in to ${user.email}:`, err.message);
+      }
+    }
+  } catch (err) {
+    console.error('❌ Check-in reminder job failed:', err.message);
+  }
+});
+
+console.log('⏰ Cron jobs scheduled: weight reminder (Sun 9 AM) + check-in (daily 8 AM)');

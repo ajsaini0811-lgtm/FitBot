@@ -5,6 +5,7 @@ import { format, subDays, addDays } from 'date-fns';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import BarcodeScanner from '../components/BarcodeScanner';
 import './FoodLog.css';
 
 const MEAL_ORDER = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -15,6 +16,7 @@ export default function FoodLog() {
   const [date, setDate] = useState(new Date());
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const dateStr = format(date, 'yyyy-MM-dd');
 
@@ -59,10 +61,37 @@ export default function FoodLog() {
   return (
     <div className="page-wrapper">
       <div className="page-content">
+        {/* Barcode scanner */}
+        {showScanner && (
+          <BarcodeScanner
+            onClose={() => setShowScanner(false)}
+            onResult={async (product) => {
+              setShowScanner(false);
+              try {
+                await api.post('/food', {
+                  mealType: 'snack',
+                  foodName: product.name,
+                  quantity: product.quantity,
+                  calories: product.calories,
+                  proteinG: product.proteinG,
+                  carbsG: product.carbsG,
+                  fatG: product.fatG,
+                  date: dateStr,
+                });
+                toast.success(`✅ ${product.name} logged!`);
+                fetchLogs();
+              } catch { toast.error('Failed to log scanned food'); }
+            }}
+          />
+        )}
+
         {/* Header */}
         <div className="foodlog-header">
           <h1 className="heading">Food Log</h1>
-          <Link to="/chat" className="btn btn-primary btn-sm"><FiMessageCircle size={14} /> Log via Chat</Link>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-outline btn-sm" onClick={() => setShowScanner(true)}>📷 Scan</button>
+            <Link to="/chat" className="btn btn-primary btn-sm"><FiMessageCircle size={14} /> Chat</Link>
+          </div>
         </div>
 
         {/* Date Nav */}

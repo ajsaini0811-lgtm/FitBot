@@ -388,6 +388,122 @@
   color: var(--text-muted);
 }
 
+/* Tab switcher */
+.coach-tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.coach-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.coach-tab-btn.active {
+  border-color: var(--primary);
+  background: #f0fdf4;
+  color: var(--primary);
+}
+
+/* Analytics table */
+.coach-analytics-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.coach-analytics-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  transition: border-color 0.2s;
+}
+
+.coach-analytics-row.inactive {
+  border-color: #fca5a5;
+  background: #fff5f5;
+}
+
+.car-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark, #16a34a));
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.car-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.car-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.car-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.car-inactive-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 3px 7px;
+  border: 1px solid #fca5a5;
+  flex-shrink: 0;
+}
+
+/* Broadcast */
+.coach-broadcast {
+  padding: 16px;
+  margin-bottom: 4px;
+}
+
+.coach-broadcast-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.coach-broadcast-textarea {
+  width: 100%;
+  resize: vertical;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .coach-stats-row { gap: 8px; }

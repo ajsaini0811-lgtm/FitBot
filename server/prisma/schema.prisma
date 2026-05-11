@@ -60,6 +60,12 @@ model User {
   // Coach custom exercises
   customExercises  CustomExercise[]
 
+  // Water intake logs
+  waterLogs        WaterLog[]
+
+  // Check-in schedule: 0=Sun, 1=Mon, ..., 6=Sat. null = no schedule
+  checkinDay       Int?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -218,6 +224,16 @@ model DietPlanMeal {
   foods    String
   calories Int
   notes    String?
+}
+
+// ─── Water Intake ─────────────────────────────────────────
+
+model WaterLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  glasses   Int      @default(1)  // each log = number of glasses
+  loggedAt  DateTime @default(now())
 }
 
 // ─── Coach Custom Exercises ───────────────────────────────

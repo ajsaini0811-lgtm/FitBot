@@ -1,0 +1,69 @@
+.meal-sug-card {
+  padding: 0;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.meal-sug-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.meal-sug-chevron {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.meal-sug-body {
+  padding: 0 20px 16px;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.meal-sug-message {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 12px 0 12px;
+  line-height: 1.5;
+}
+
+.meal-sug-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meal-sug-item {
+  background: var(--bg, #f9fafb);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+.msi-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.msi-macros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+
+.msi-cal { color: #f97316; font-weight: 600; }
+.msi-p   { color: #3b82f6; }
+.msi-c   { color: #f59e0b; }
+.msi-f   { color: #8b5cf6; }

@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useFit } from '../context/FitContext';
 import { calcBMI, bmiCategory } from '../utils/calculations';
 import api from '../utils/api';
 import WeightChart from '../components/charts/WeightChart';
 import CalorieTrendChart from '../components/charts/CalorieTrendChart';
+import Achievements from '../components/Achievements';
+import toast from 'react-hot-toast';
 import './Progress.css';
 
 export default function Progress() {
@@ -52,7 +54,24 @@ export default function Progress() {
   return (
     <div className="page-wrapper">
       <div className="page-content">
-        <h1 className="heading" style={{ marginBottom: 20 }}>Progress</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h1 className="heading" style={{ margin: 0 }}>Progress</h1>
+          <button className="btn btn-outline btn-sm" onClick={async () => {
+            toast.loading('Generating PDF…', { id: 'pdf' });
+            try {
+              const { default: jsPDF } = await import('jspdf');
+              const { default: html2canvas } = await import('html2canvas');
+              const el = document.querySelector('.page-content');
+              const canvas = await html2canvas(el, { scale: 1.5, useCORS: true });
+              const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+              const imgW = 210;
+              const imgH = (canvas.height * imgW) / canvas.width;
+              pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgW, imgH);
+              pdf.save(`FitBot-Progress-${new Date().toISOString().split('T')[0]}.pdf`);
+              toast.success('PDF downloaded!', { id: 'pdf' });
+            } catch { toast.error('Failed to export PDF', { id: 'pdf' }); }
+          }}>📄 Export PDF</button>
+        </div>
 
         {/* Workout stats */}
         <div className="grid-3" style={{ marginBottom: 16 }}>
@@ -103,11 +122,16 @@ export default function Progress() {
 
         {/* Calorie trend */}
         {weekStats?.length > 0 && (
-          <div className="card" style={{ padding: 20 }}>
+          <div className="card" style={{ padding: 20, marginBottom: 16 }}>
             <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16 }}>🔥 Calorie Trend — Last 7 Days</h3>
             <CalorieTrendChart data={weekStats} calorieBudget={user?.calorieBudget || 2000} />
           </div>
         )}
+
+        {/* Achievements */}
+        <div className="card" style={{ padding: 20 }}>
+          <Achievements />
+        </div>
       </div>
     </div>
   );

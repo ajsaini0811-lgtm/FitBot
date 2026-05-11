@@ -1,0 +1,45 @@
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  border-radius: 12px;
+  padding: 8px 14px;
+  transition: transform 0.2s;
+}
+
+.streak-badge.streak-hot {
+  background: linear-gradient(135deg, #fff7ed, #fef3c7);
+  border-color: #f97316;
+  animation: pulse-streak 2s ease-in-out infinite;
+}
+
+@keyframes pulse-streak {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.2); }
+  50%       { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
+}
+
+.streak-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.streak-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.streak-days {
+  font-size: 15px;
+  font-weight: 800;
+  color: #c2410c;
+}
+
+.streak-label {
+  font-size: 11px;
+  color: #9a3412;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

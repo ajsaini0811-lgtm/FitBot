@@ -15,8 +15,14 @@ export default function CoachClientDetail() {
   const [tab, setTab] = useState('overview'); // overview | plans | diet
   const [showCreatePlan, setShowCreatePlan] = useState(false);
   const [showCreateDiet, setShowCreateDiet] = useState(false);
+  const [checkinDay, setCheckinDay] = useState(null);
+  const [savingCheckin, setSavingCheckin] = useState(false);
 
   useEffect(() => { fetchClient(); }, [clientId]);
+
+  useEffect(() => {
+    if (client) setCheckinDay(client.checkinDay ?? null);
+  }, [client]);
 
   async function fetchClient() {
     try {
@@ -37,6 +43,16 @@ export default function CoachClientDetail() {
       toast.success('Plan deleted');
       fetchClient();
     } catch { toast.error('Failed to delete plan'); }
+  }
+
+  async function saveCheckinDay(day) {
+    setSavingCheckin(true);
+    try {
+      await api.put(`/coach/clients/${client.id}/checkin`, { checkinDay: day });
+      setCheckinDay(day);
+      toast.success(day === null ? 'Check-in schedule removed' : 'Check-in day saved!');
+    } catch { toast.error('Failed to save check-in day'); }
+    finally { setSavingCheckin(false); }
   }
 
   async function deleteDiet(dietId) {
@@ -104,6 +120,29 @@ export default function CoachClientDetail() {
               ))}
             </div>
           )}
+
+          {/* Check-in Schedule */}
+          <h3 className="ccd-section-h" style={{ marginTop: 20 }}>📅 Weekly Check-in Day</h3>
+          <div className="ccd-checkin-wrap">
+            <p className="ccd-checkin-sub">Client gets an email reminder on this day each week.</p>
+            <div className="ccd-checkin-days">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
+                <button
+                  key={i}
+                  className={`ccd-day-btn ${checkinDay === i ? 'active' : ''}`}
+                  onClick={() => saveCheckinDay(checkinDay === i ? null : i)}
+                  disabled={savingCheckin}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+            {checkinDay !== null && (
+              <p className="ccd-checkin-set">
+                ✅ Reminder set for {['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][checkinDay]}s
+              </p>
+            )}
+          </div>
 
           <h3 className="ccd-section-h" style={{ marginTop: 20 }}>Recent Workouts</h3>
           {client.workoutSessions?.length === 0 ? (

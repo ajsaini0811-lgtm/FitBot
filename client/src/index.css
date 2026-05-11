@@ -159,6 +159,62 @@ input, textarea, select { font-family: inherit; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
 
+/* ─── Mobile / PWA polish ───────────────────────────────── */
+/* Safe area insets for notched iPhones & Android */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .page-wrapper {
+    padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+  }
+
+  .page-content {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 24px);
+  }
+
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .top-nav {
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+  }
+}
+
+/* Touch targets — minimum 44×44px for all interactive elements */
+@media (max-width: 768px) {
+  .btn          { min-height: 44px; }
+  .btn-sm       { min-height: 38px; }
+  .form-input   { min-height: 46px; font-size: 16px; } /* 16px prevents iOS zoom */
+  select.form-input { font-size: 16px; }
+
+  /* Tap highlight */
+  a, button { -webkit-tap-highlight-color: transparent; }
+
+  /* Slightly larger stat cards on mobile */
+  .stat-icon { width: 40px; height: 40px; }
+  .stat-value { font-size: 22px; }
+
+  /* Card padding tighter on small screens */
+  .card { border-radius: 14px; }
+
+  /* Grid improvements — never go below 140px per column */
+  .grid-2 { gap: 12px; }
+  .grid-3 { gap: 10px; }
+}
+
+@media (max-width: 380px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Smooth scrolling everywhere */
+html { scroll-behavior: smooth; }
+
+/* Better input appearance on mobile */
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
 /* ─── Chat Bubbles ───────────────────────────────────────── */
 .bubble {
   max-width: 78%; padding: 12px 16px; border-radius: 18px;

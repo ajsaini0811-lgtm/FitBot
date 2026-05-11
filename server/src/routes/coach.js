@@ -40,7 +40,7 @@ router.get('/clients/:clientId', async (req, res) => {
         id: true, name: true, email: true, age: true, gender: true,
         heightCm: true, weightKg: true, goal: true, goalWeight: true,
         activityLevel: true, calorieBudget: true, proteinGoalG: true,
-        carbGoalG: true, fatGoalG: true, setupDone: true,
+        carbGoalG: true, fatGoalG: true, setupDone: true, checkinDay: true,
         weightLogs: { orderBy: { loggedAt: 'desc' }, take: 30 },
         workoutSessions: {
           orderBy: { date: 'desc' }, take: 10,
@@ -383,6 +383,28 @@ router.delete('/exercises/:id', async (req, res) => {
     if (!ex) return res.status(404).json({ error: 'Exercise not found' });
     await prisma.customExercise.delete({ where: { id: ex.id } });
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Check-in Schedule ────────────────────────────────────────
+
+// PUT /api/coach/clients/:clientId/checkin  { checkinDay: 0-6 | null }
+router.put('/clients/:clientId/checkin', async (req, res) => {
+  try {
+    const { checkinDay } = req.body; // 0=Sun, 1=Mon, ..., 6=Sat, null=off
+    const client = await prisma.user.findFirst({
+      where: { id: req.params.clientId, coachId: req.user.id },
+    });
+    if (!client) return res.status(404).json({ error: 'Client not found' });
+
+    const updated = await prisma.user.update({
+      where: { id: client.id },
+      data: { checkinDay: checkinDay === null || checkinDay === undefined ? null : Number(checkinDay) },
+      select: { id: true, name: true, checkinDay: true },
+    });
+    res.json(updated);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -318,3 +318,58 @@
   color: var(--text-muted);
   margin-bottom: 6px;
 }
+
+/* Check-in schedule */
+.ccd-checkin-wrap {
+  background: #f5f3ff;
+  border: 1.5px solid #e0d9ff;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 4px;
+}
+
+.ccd-checkin-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.ccd-checkin-days {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ccd-day-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #c4b5fd;
+  background: white;
+  color: #6366f1;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ccd-day-btn:hover {
+  background: #ede9fe;
+}
+
+.ccd-day-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.ccd-day-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ccd-checkin-set {
+  font-size: 12px;
+  color: #4f46e5;
+  font-weight: 600;
+  margin: 8px 0 0;
+}

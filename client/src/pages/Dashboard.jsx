@@ -5,6 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { useFit } from '../context/FitContext';
 import CalorieRing from '../components/charts/CalorieRing';
 import CalorieTrendChart from '../components/charts/CalorieTrendChart';
+import WaterTracker from '../components/WaterTracker';
+import StreakBadge from '../components/StreakBadge';
+import MealSuggestions from '../components/MealSuggestions';
 import './Dashboard.css';
 
 function MacroBar({ label, consumed, goal, color }) {
@@ -48,9 +51,12 @@ export default function Dashboard() {
               {user?.coachName ? `Coach ${user.coachName} is counting on you!` : 'Let\'s make today count.'}
             </p>
           </div>
-          <Link to="/chat" className="btn btn-primary btn-sm">
-            <FiMessageCircle size={14} /> Open Chat
-          </Link>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <StreakBadge />
+            <Link to="/chat" className="btn btn-primary btn-sm">
+              <FiMessageCircle size={14} /> Chat
+            </Link>
+          </div>
         </div>
 
         {/* Top row: Calorie Ring + Quick Stats */}
@@ -93,6 +99,12 @@ export default function Dashboard() {
             <CalorieTrendChart data={weekStats} calorieBudget={stats.calorieBudget} />
           </div>
         )}
+
+        {/* Water Tracker */}
+        <WaterTracker />
+
+        {/* Meal Suggestions */}
+        <MealSuggestions />
 
         {/* Quick actions */}
         <div className="grid-2">

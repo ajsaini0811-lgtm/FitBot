@@ -1,0 +1,103 @@
+.barcode-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.barcode-modal {
+  background: var(--surface, #fff);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+  animation: slideUp 0.25s ease;
+}
+
+.barcode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.barcode-header h3 { margin: 0; font-size: 17px; font-weight: 700; }
+
+.barcode-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px 8px;
+}
+
+.barcode-viewfinder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #000;
+}
+
+.barcode-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.barcode-frame {
+  position: absolute;
+  inset: 20%;
+  pointer-events: none;
+}
+
+.barcode-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: #22c55e;
+  border-style: solid;
+}
+.barcode-corner.tl { top: 0; left: 0;   border-width: 3px 0 0 3px; }
+.barcode-corner.tr { top: 0; right: 0;  border-width: 3px 3px 0 0; }
+.barcode-corner.bl { bottom: 0; left: 0;  border-width: 0 0 3px 3px; }
+.barcode-corner.br { bottom: 0; right: 0; border-width: 0 3px 3px 0; }
+
+.barcode-scan-line {
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 2px;
+  background: #22c55e;
+  animation: scan 1.8s ease-in-out infinite;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+@keyframes scan {
+  0%, 100% { top: 10%; }
+  50%       { top: 90%; }
+}
+
+.barcode-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 14px 20px;
+  margin: 0;
+}
+
+.barcode-error, .barcode-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
