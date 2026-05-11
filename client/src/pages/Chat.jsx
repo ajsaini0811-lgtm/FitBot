@@ -63,12 +63,12 @@ export default function Chat() {
     }
   };
 
-  const triggerWelcome = () => {
+  const triggerWelcome = (persist = false) => {
     const result = transition(getInitialState(), '__start', user);
-    applyBotMessages(result.botMessages, result.newState);
+    applyBotMessages(result.botMessages, result.newState, {}, persist);
   };
 
-  const applyBotMessages = useCallback(async (botMessages, newState, extra = {}) => {
+  const applyBotMessages = useCallback(async (botMessages, newState, extra = {}, persist = true) => {
     setBotState(newState);
     for (const msg of botMessages) {
       setIsTyping(true);
@@ -76,8 +76,10 @@ export default function Chat() {
       setIsTyping(false);
       const newMsg = { id: Date.now() + Math.random(), role: 'bot', content: msg.content, quickReplies: msg.quickReplies };
       setMessages(prev => [...prev, newMsg]);
-      // Persist to server (fire and forget)
-      api.post('/chat', { role: 'bot', content: msg.content, metadata: msg.quickReplies ? { quickReplies: msg.quickReplies } : null }).catch(() => {});
+      // Persist to server only when needed (not for welcome/reset messages)
+      if (persist) {
+        api.post('/chat', { role: 'bot', content: msg.content, metadata: msg.quickReplies ? { quickReplies: msg.quickReplies } : null }).catch(() => {});
+      }
       // Set last quick replies
       if (msg.quickReplies) {
         setCurrentReplies(msg.quickReplies);
@@ -205,7 +207,7 @@ export default function Chat() {
         </div>
         <div className="chat-header-actions">
           <button className="icon-btn" onClick={clearChat} title="Clear chat"><FiTrash2 size={17} /></button>
-          <button className="icon-btn" onClick={() => { setBotState(getInitialState()); triggerWelcome(); }} title="Reset"><FiRefreshCw size={17} /></button>
+          <button className="icon-btn" onClick={() => { setMessages([]); setCurrentReplies(null); setBotState(getInitialState()); triggerWelcome(false); }} title="Reset"><FiRefreshCw size={17} /></button>
         </div>
       </div>
 

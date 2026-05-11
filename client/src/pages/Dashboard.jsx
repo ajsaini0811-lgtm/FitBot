@@ -28,7 +28,6 @@ export default function Dashboard() {
 
   useEffect(() => { refreshTodayStats(); }, []);
 
-  const firstName = user?.name?.split(' ')[0] || 'there';
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
@@ -44,7 +43,7 @@ export default function Dashboard() {
         {/* Greeting */}
         <div className="dashboard-greeting">
           <div>
-            <h1 className="heading">{greeting}, {firstName}! 👋</h1>
+            <h1 className="heading">{greeting}! 👋</h1>
             <p className="greeting-sub">
               {user?.coachName ? `Coach ${user.coachName} is counting on you!` : 'Let\'s make today count.'}
             </p>
