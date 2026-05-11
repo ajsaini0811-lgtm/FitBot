@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { calcBMR, calcTDEE, calcCalorieGoal, calcMacros, calcBMI, bmiCategory, activityLabel, goalLabel } from '../utils/calculations';
 import api from '../utils/api';
@@ -28,7 +28,13 @@ export default function Profile() {
     activityLevel: user?.activityLevel || 'moderate',
   });
   const [loading, setLoading] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Delete account modal state
+  const [deleteStep, setDeleteStep] = useState(0); // 0=hidden, 1=warning, 2=otp
+  const [deleteOtp, setDeleteOtp] = useState(['', '', '', '', '', '']);
+  const [deleteSending, setDeleteSending] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const otpRefs = useRef([]);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -43,6 +49,47 @@ export default function Profile() {
 
   const preview = getPreview();
   const bmi = form.heightCm && form.weightKg ? calcBMI(+form.weightKg, +form.heightCm) : null;
+
+  const handleRequestDelete = async () => {
+    setDeleteSending(true);
+    try {
+      await api.post('/auth/request-delete');
+      toast.success('Verification code sent to your email!');
+      setDeleteStep(2);
+      setDeleteOtp(['', '', '', '', '', '']);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to send code');
+    } finally {
+      setDeleteSending(false);
+    }
+  };
+
+  const handleOtpChange = (i, val) => {
+    if (!/^\d?$/.test(val)) return;
+    const next = [...deleteOtp];
+    next[i] = val;
+    setDeleteOtp(next);
+    if (val && i < 5) otpRefs.current[i + 1]?.focus();
+  };
+
+  const handleOtpKey = (i, e) => {
+    if (e.key === 'Backspace' && !deleteOtp[i] && i > 0) otpRefs.current[i - 1]?.focus();
+  };
+
+  const handleConfirmDelete = async () => {
+    const code = deleteOtp.join('');
+    if (code.length < 6) return toast.error('Enter the full 6-digit code');
+    setDeleteLoading(true);
+    try {
+      await api.delete('/auth/account', { data: { otp: code } });
+      toast.success('Account deleted.');
+      logout();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Deletion failed');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -154,20 +201,72 @@ export default function Profile() {
         {/* Sign out */}
         <div style={{ marginTop: 24, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button className="btn btn-outline" style={{ flex: 1 }} onClick={logout}>Sign Out</button>
-          <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => setShowDeleteConfirm(true)}>Delete Account</button>
+          <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => setDeleteStep(1)}>Delete Account</button>
         </div>
 
-        {showDeleteConfirm && (
-          <div className="delete-confirm card">
-            <p>⚠️ This will permanently delete your account and all data. Are you sure?</p>
-            <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
-              <button className="btn btn-ghost" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-              <button className="btn btn-danger" onClick={async () => {
-                try {
-                  await api.delete('/auth/account');
-                  logout();
-                } catch { toast.error('Failed to delete account'); }
-              }}>Yes, Delete Everything</button>
+        {/* Delete Account Modal */}
+        {deleteStep > 0 && (
+          <div className="delete-modal-overlay" onClick={() => setDeleteStep(0)}>
+            <div className="delete-modal card" onClick={e => e.stopPropagation()}>
+
+              {/* Step 1 — Warning */}
+              {deleteStep === 1 && (
+                <>
+                  <div className="delete-modal-icon">⚠️</div>
+                  <h3 className="delete-modal-title">Delete your account?</h3>
+                  <p className="delete-modal-sub">
+                    This will <strong>permanently erase</strong> all your data — food logs, workouts, weight history, and progress. This cannot be undone.
+                  </p>
+                  <p className="delete-modal-sub">
+                    We'll send a verification code to <strong>{user?.email}</strong> to confirm.
+                  </p>
+                  <div className="delete-modal-actions">
+                    <button className="btn btn-outline" onClick={() => setDeleteStep(0)}>Cancel</button>
+                    <button className="btn btn-danger" onClick={handleRequestDelete} disabled={deleteSending}>
+                      {deleteSending ? 'Sending…' : 'Send Verification Code'}
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Step 2 — Enter OTP */}
+              {deleteStep === 2 && (
+                <>
+                  <div className="delete-modal-icon">📧</div>
+                  <h3 className="delete-modal-title">Enter verification code</h3>
+                  <p className="delete-modal-sub">
+                    We sent a 6-digit code to <strong>{user?.email}</strong>. Enter it below to confirm deletion.
+                  </p>
+                  <div className="otp-grid" style={{ marginBottom: 20 }}>
+                    {deleteOtp.map((v, i) => (
+                      <input
+                        key={i}
+                        className="otp-input form-input"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={v}
+                        onChange={e => handleOtpChange(i, e.target.value)}
+                        onKeyDown={e => handleOtpKey(i, e)}
+                        ref={el => otpRefs.current[i] = el}
+                      />
+                    ))}
+                  </div>
+                  <div className="delete-modal-actions">
+                    <button className="btn btn-outline" onClick={() => setDeleteStep(1)}>Back</button>
+                    <button className="btn btn-danger" onClick={handleConfirmDelete} disabled={deleteLoading}>
+                      {deleteLoading ? 'Deleting…' : 'Delete My Account'}
+                    </button>
+                  </div>
+                  <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 12, textAlign: 'center' }}>
+                    Didn't get the code?{' '}
+                    <button className="btn btn-ghost btn-sm" onClick={handleRequestDelete} disabled={deleteSending}>
+                      {deleteSending ? 'Sending…' : 'Resend'}
+                    </button>
+                  </p>
+                </>
+              )}
+
             </div>
           </div>
         )}

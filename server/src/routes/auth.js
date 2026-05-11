@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
-const { sendOtpEmail, sendPasswordResetEmail } = require('../utils/mailer');
+const { sendOtpEmail, sendPasswordResetEmail, sendAccountDeletionEmail } = require('../utils/mailer');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -158,10 +158,44 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// DELETE /api/auth/account — permanently delete user and all data
+// POST /api/auth/request-delete — send OTP to confirm account deletion
+router.post('/request-delete', requireAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.emailVerification.upsert({
+      where: { email: user.email },
+      update: { otp, userData: { type: 'delete', email: user.email }, expiresAt },
+      create: { email: user.email, otp, userData: { type: 'delete', email: user.email }, expiresAt },
+    });
+
+    await sendAccountDeletionEmail(user.email, user.name, otp);
+    res.json({ message: 'Deletion code sent to your email.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send deletion code: ' + err.message });
+  }
+});
+
+// DELETE /api/auth/account — permanently delete user after OTP verification
 router.delete('/account', requireAuth, async (req, res) => {
   try {
-    await prisma.user.delete({ where: { id: req.user.id } });
+    const { otp } = req.body;
+    if (!otp) return res.status(400).json({ error: 'Verification code is required' });
+
+    const user = req.user;
+    const record = await prisma.emailVerification.findUnique({ where: { email: user.email } });
+    if (!record) return res.status(400).json({ error: 'No deletion request found. Please request a new code.' });
+    if (new Date() > record.expiresAt) {
+      await prisma.emailVerification.delete({ where: { email: user.email } });
+      return res.status(400).json({ error: 'Code expired. Please request a new one.' });
+    }
+    if (record.otp !== otp) return res.status(400).json({ error: 'Invalid code. Please try again.' });
+    if (record.userData?.type !== 'delete') return res.status(400).json({ error: 'Invalid deletion request.' });
+
+    await prisma.emailVerification.delete({ where: { email: user.email } });
+    await prisma.user.delete({ where: { id: user.id } });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete account: ' + err.message });

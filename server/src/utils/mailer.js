@@ -108,4 +108,36 @@ async function sendPasswordResetEmail(email, name, otp) {
   console.log('✅ Reset email sent. ID:', data?.id, '| To:', email);
 }
 
-module.exports = { sendOtpEmail, sendWeeklyReminder, sendPasswordResetEmail };
+async function sendAccountDeletionEmail(email, name, otp) {
+  const { data, error } = await resend.emails.send({
+    from: 'FitBot <hello@fitbot.life>',
+    to: email,
+    subject: '⚠️ Confirm account deletion — FitBot',
+    html: `
+      <div style="font-family: 'Inter', Arial, sans-serif; max-width: 480px; margin: 0 auto; background: #f9fafb; border-radius: 16px; overflow: hidden;">
+        <div style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 32px 40px; text-align: center;">
+          <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">💪 FitBot</h1>
+          <p style="color: rgba(255,255,255,0.85); margin: 8px 0 0; font-size: 14px;">Account Deletion Request</p>
+        </div>
+        <div style="padding: 40px; background: white;">
+          <h2 style="margin: 0 0 8px; color: #111827; font-size: 20px;">Hey ${name} 👋</h2>
+          <p style="color: #6b7280; line-height: 1.6; margin: 0 0 16px;">We received a request to <strong>permanently delete your FitBot account</strong>. This will erase all your data including food logs, workouts, and progress — and cannot be undone.</p>
+          <p style="color: #6b7280; line-height: 1.6; margin: 0 0 32px;">Use this code to confirm. It expires in <strong>10 minutes</strong>.</p>
+          <div style="text-align: center; background: #fff5f5; border: 2px dashed #ef4444; border-radius: 12px; padding: 28px;">
+            <p style="margin: 0 0 8px; font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px;">Deletion Code</p>
+            <p style="margin: 0; font-size: 42px; font-weight: 800; letter-spacing: 10px; color: #dc2626;">${otp}</p>
+          </div>
+          <p style="color: #9ca3af; font-size: 13px; margin: 24px 0 0; text-align: center;">If you didn't request this, your account is safe — just ignore this email.</p>
+        </div>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error('❌ Deletion email error:', JSON.stringify(error));
+    throw new Error(error.message || 'Failed to send deletion email');
+  }
+  console.log('✅ Deletion email sent. ID:', data?.id, '| To:', email);
+}
+
+module.exports = { sendOtpEmail, sendWeeklyReminder, sendPasswordResetEmail, sendAccountDeletionEmail };
