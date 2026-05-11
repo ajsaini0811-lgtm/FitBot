@@ -21,6 +21,7 @@ import CoachDashboard  from './pages/CoachDashboard';
 import CoachClientDetail from './pages/CoachClientDetail';
 import CoachChat       from './pages/CoachChat';
 import UserCoachChat   from './pages/UserCoachChat';
+import ForgotPassword  from './pages/ForgotPassword';
 
 import { FiMessageCircle, FiHome, FiList, FiActivity, FiTrendingUp, FiUser, FiLogOut, FiBook, FiUsers } from 'react-icons/fi';
 import './App.css';
@@ -114,6 +115,7 @@ export default function App() {
             ? <Navigate to={user.setupDone ? (isCoach ? '/coach' : '/chat') : '/setup'} replace />
             : <RegisterPage />
         } />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Auth required, setup optional */}
         <Route path="/setup" element={<AuthRoute><Setup /></AuthRoute>} />

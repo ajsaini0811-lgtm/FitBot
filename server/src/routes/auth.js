@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
-const { sendOtpEmail } = require('../utils/mailer');
+const { sendOtpEmail, sendPasswordResetEmail } = require('../utils/mailer');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -104,6 +104,58 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me
 router.get('/me', requireAuth, (req, res) => {
   res.json(safeUser(req.user));
+});
+
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    // Always respond the same way to prevent email enumeration
+    if (!user) return res.json({ message: 'If that email exists, a reset code has been sent.' });
+
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.emailVerification.upsert({
+      where: { email },
+      update: { otp, userData: { type: 'reset', email }, expiresAt },
+      create: { email, otp, userData: { type: 'reset', email }, expiresAt },
+    });
+
+    await sendPasswordResetEmail(email, user.name, otp);
+    res.json({ message: 'If that email exists, a reset code has been sent.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send reset email: ' + err.message });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) return res.status(400).json({ error: 'All fields are required' });
+    if (newPassword.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    const record = await prisma.emailVerification.findUnique({ where: { email } });
+    if (!record) return res.status(400).json({ error: 'No reset request found. Please request a new code.' });
+    if (new Date() > record.expiresAt) {
+      await prisma.emailVerification.delete({ where: { email } });
+      return res.status(400).json({ error: 'Code expired. Please request a new one.' });
+    }
+    if (record.otp !== otp) return res.status(400).json({ error: 'Invalid code. Please try again.' });
+    if (record.userData?.type !== 'reset') return res.status(400).json({ error: 'Invalid reset request.' });
+
+    const hashed = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({ where: { email }, data: { password: hashed } });
+    await prisma.emailVerification.delete({ where: { email } });
+
+    res.json({ success: true, message: 'Password reset successfully. You can now log in.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Reset failed: ' + err.message });
+  }
 });
 
 // DELETE /api/auth/account — permanently delete user and all data

@@ -52,8 +52,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="auth-footer">
-          Don't have an account? <Link to="/register">Create one free</Link>
+        <div className="auth-footer" style={{ flexDirection: 'column', gap: 8 }}>
+          <Link to="/forgot-password" style={{ color: 'var(--text-muted)', fontSize: 13 }}>Forgot your password?</Link>
+          <span>Don't have an account? <Link to="/register">Create one free</Link></span>
         </div>
       </div>
     </div>
