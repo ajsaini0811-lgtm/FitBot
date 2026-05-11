@@ -59,7 +59,7 @@ export default function ExerciseLibrary() {
 
   const results = useMemo(() => {
     let list = exercises;
-    if (query)      list = list.filter(e => e.name.toLowerCase().includes(query.toLowerCase()) || e.muscle.toLowerCase().includes(query.toLowerCase()));
+    if (query)      list = list.filter(e => e.name?.toLowerCase().includes(query.toLowerCase()) || e.muscle?.toLowerCase().includes(query.toLowerCase()));
     if (bodyPart)   list = list.filter(e => e.bodyPart === bodyPart);
     if (cat)        list = list.filter(e => e.cat === cat);
     if (difficulty) list = list.filter(e => e.difficulty === difficulty);
@@ -222,7 +222,7 @@ export default function ExerciseLibrary() {
               {ex.defaultSets && (
                 <p className="ex-card-sets">{ex.defaultSets} sets × {ex.defaultReps ?? '—'} reps</p>
               )}
-              <p className="ex-card-steps">{ex.instructions.length} steps · {ex.tips.length} tips</p>
+              <p className="ex-card-steps">{(ex.instructions||[]).length} steps · {(ex.tips||[]).length} tips</p>
             </button>
           ))}
         </div>
