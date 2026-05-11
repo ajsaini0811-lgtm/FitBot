@@ -1,0 +1,130 @@
+/* ── Coach Create Diet form ── */
+.ccd-form {
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1.5px solid #f59e0b;
+  border-radius: 14px;
+  background: #fffbeb;
+}
+
+.ccd-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ccd-form-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ccd-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.ccd-close:hover { background: #e5e7eb; color: var(--text-primary); }
+
+.ccd-macros-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ccd-derived-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 12px;
+}
+
+.ccd-meals-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.ccd-meal-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.ccd-meal-type {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: white;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.ccd-meal-foods { flex: 1; }
+.ccd-meal-cal { width: 80px; flex-shrink: 0; }
+
+.ccd-remove-meal {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.ccd-remove-meal:hover { color: #ef4444; }
+
+.ccd-add-meal-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d97706;
+  background: none;
+  border: 1px dashed #f59e0b;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  width: 100%;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.ccd-add-meal-btn:hover { background: #fef3c7; }
+
+.ccd-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 500px) {
+  .ccd-macros-row { grid-template-columns: 1fr 1fr; }
+  .ccd-meal-row { flex-wrap: wrap; }
+  .ccd-meal-type { width: 100%; }
+  .ccd-meal-foods { width: 100%; }
+}

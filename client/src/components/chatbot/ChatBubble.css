@@ -1,0 +1,48 @@
+.chat-bubble-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+  animation: bubble-in 0.2s ease;
+}
+.chat-bubble-wrap.bot  { justify-content: flex-start; }
+.chat-bubble-wrap.user { justify-content: flex-end; }
+
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bot-avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(34,197,94,0.3);
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 11px 15px;
+  border-radius: 18px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+.bubble-bot {
+  background: var(--white);
+  border: 1px solid var(--gray-light);
+  border-bottom-left-radius: 4px;
+  color: var(--dark);
+  box-shadow: var(--shadow);
+}
+.bubble-user {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .bubble { max-width: 85%; font-size: 14px; }
+}

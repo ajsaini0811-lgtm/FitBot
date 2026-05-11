@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+
+  // Role: "USER" | "COACH"
+  role          String   @default("USER")
+
+  // Coach ↔ Client linking (self-relation)
+  coachId       String?
+  coach         User?    @relation("CoachClients", fields: [coachId], references: [id])
+  clients       User[]   @relation("CoachClients")
+
+  // Coach profile extras
+  specialization String?  // e.g. "Strength & Conditioning"
+  bio            String?
+
+  // Fitness profile (filled during Setup wizard — USER only)
+  age           Int?
+  gender        String?  // "male" | "female" | "other"
+  heightCm      Float?
+  weightKg      Float?
+  goalWeight    Float?
+  goal          String?  // "lose" | "maintain" | "gain"
+  activityLevel String?  // "sedentary" | "light" | "moderate" | "active" | "very_active"
+  calorieBudget Int?
+  proteinGoalG  Int?
+  carbGoalG     Int?
+  fatGoalG      Int?
+  setupDone     Boolean  @default(false)
+  coachName     String?
+
+  foodLogs        FoodLog[]
+  workoutSessions WorkoutSession[]
+  weightLogs      WeightLog[]
+  chatMessages    ChatMessage[]
+
+  // Coach-assigned plans
+  assignedPlans   WorkoutPlan[]  @relation("UserPlans")
+  createdPlans    WorkoutPlan[]  @relation("CoachPlans")
+  assignedDiets   DietPlan[]     @relation("UserDiets")
+  createdDiets    DietPlan[]     @relation("CoachDiets")
+
+  // Real-time coach chat
+  sentMessages     CoachMessage[] @relation("SentMessages")
+  receivedMessages CoachMessage[] @relation("ReceivedMessages")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EmailVerification {
+  email     String   @id
+  otp       String
+  userData  Json     // { name, email, password (hashed), role? }
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// ─── Food Tracking ────────────────────────────────────────
+
+model FoodLog {
+  id       String @id @default(cuid())
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+
+  date     DateTime @default(now())
+  mealType String
+  foodName String
+  quantity Float
+  calories Float
+  proteinG Float    @default(0)
+  carbsG   Float    @default(0)
+  fatG     Float    @default(0)
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Workout Tracking ─────────────────────────────────────
+
+model WorkoutSession {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  date      DateTime         @default(now())
+  name      String?
+  notes     String?
+  exercises WorkoutExercise[]
+
+  createdAt DateTime @default(now())
+}
+
+model WorkoutExercise {
+  id        String         @id @default(cuid())
+  session   WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+
+  name     String
+  category String
+
+  sets     Int?
+  reps     Int?
+  weightKg Float?
+
+  durationMin Int?
+  distanceKm  Float?
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Body Stats ───────────────────────────────────────────
+
+model WeightLog {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  weightKg Float
+  notes    String?
+  loggedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Chat History (Chatbot) ───────────────────────────────
+
+model ChatMessage {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  role     String
+  content  String
+  metadata Json?
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Coach Workout Plans ──────────────────────────────────
+
+model WorkoutPlan {
+  id          String           @id @default(cuid())
+  coachId     String
+  coach       User             @relation("CoachPlans", fields: [coachId], references: [id])
+  userId      String
+  user        User             @relation("UserPlans", fields: [userId], references: [id])
+  name        String
+  description String?
+  isActive    Boolean          @default(true)
+  days        WorkoutPlanDay[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model WorkoutPlanDay {
+  id        String                @id @default(cuid())
+  planId    String
+  plan      WorkoutPlan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  dayName   String                // "Monday" | "Push Day" | "Day 1"
+  dayNumber Int
+  exercises WorkoutPlanExercise[]
+}
+
+model WorkoutPlanExercise {
+  id         String         @id @default(cuid())
+  dayId      String
+  day        WorkoutPlanDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  name       String
+  sets       Int?
+  reps       String?        // "8-12"
+  weightNote String?
+  duration   String?
+  notes      String?
+  order      Int            @default(0)
+}
+
+// ─── Coach Diet Plans ─────────────────────────────────────
+
+model DietPlan {
+  id            String         @id @default(cuid())
+  coachId       String
+  coach         User           @relation("CoachDiets", fields: [coachId], references: [id])
+  userId        String
+  user          User           @relation("UserDiets", fields: [userId], references: [id])
+  name          String
+  description   String?
+  totalCalories Int
+  proteinG      Int
+  carbsG        Int
+  fatG          Int
+  isActive      Boolean        @default(true)
+  meals         DietPlanMeal[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model DietPlanMeal {
+  id       String   @id @default(cuid())
+  planId   String
+  plan     DietPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  mealType String   // "breakfast"|"lunch"|"dinner"|"snack"|"pre-workout"|"post-workout"
+  foods    String
+  calories Int
+  notes    String?
+}
+
+// ─── Coach ↔ User Messaging ───────────────────────────────
+
+model CoachMessage {
+  id         String   @id @default(cuid())
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  content    String
+  imageUrl   String?
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}

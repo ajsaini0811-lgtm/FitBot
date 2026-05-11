@@ -1,0 +1,190 @@
+/* ── My Diet Plan ── */
+.mydiet-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+
+.mydiet-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+}
+
+.mydiet-header {
+  margin-bottom: 20px;
+}
+
+.mydiet-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.mydiet-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 6px;
+}
+
+.mydiet-coach {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mydiet-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.mydiet-empty p { font-size: 15px; margin-bottom: 8px; }
+
+/* Macro card */
+.mydiet-macros {
+  padding: 18px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mydiet-macro-total {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.mydiet-macro-cal {
+  display: block;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  font-family: 'Poppins', sans-serif;
+}
+
+.mydiet-macro-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mydiet-macro-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mydiet-macro-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mydiet-macro-label {
+  font-size: 11px;
+  font-weight: 700;
+  width: 50px;
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.mydiet-macro-label.protein { color: #ef4444; }
+.mydiet-macro-label.carbs   { color: #f59e0b; }
+.mydiet-macro-label.fat     { color: #6366f1; }
+
+.mydiet-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mydiet-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.mydiet-bar-fill.protein { background: #ef4444; }
+.mydiet-bar-fill.carbs   { background: #f59e0b; }
+.mydiet-bar-fill.fat     { background: #6366f1; }
+
+.mydiet-macro-val {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Meals */
+.mydiet-meals {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mydiet-meal {
+  border-radius: 12px;
+  padding: 16px;
+  border: 1.5px solid var(--border);
+}
+
+.mydiet-meal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mydiet-meal-icon { font-size: 20px; }
+
+.mydiet-meal-type {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.mydiet-meal-cal {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  background: #f0fdf4;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.mydiet-meal-foods {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+
+.mydiet-meal-notes {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .mydiet-macros {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mydiet-macro-total {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .mydiet-macro-val { width: 70px; font-size: 10px; }
+}

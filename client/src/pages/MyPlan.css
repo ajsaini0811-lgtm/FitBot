@@ -1,0 +1,117 @@
+/* ── My Workout Plan ── */
+.myplan-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
+
+.myplan-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-muted);
+}
+
+.myplan-header {
+  margin-bottom: 20px;
+}
+
+.myplan-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.myplan-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 6px;
+}
+
+.myplan-coach {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.myplan-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.myplan-empty p {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.myplan-day {
+  margin-bottom: 14px;
+  border-radius: 14px;
+  padding: 18px;
+  border: 1.5px solid var(--border);
+}
+
+.myplan-day-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.myplan-rest {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.myplan-exercises {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.myplan-ex {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.myplan-ex-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.myplan-ex-info { flex: 1; }
+
+.myplan-ex-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.myplan-ex-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.myplan-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.myplan-tag.green { background: #dcfce7; color: #15803d; }
+.myplan-tag.blue  { background: #dbeafe; color: #1d4ed8; }
+.myplan-tag.gray  { background: #f3f4f6; color: var(--text-muted); }

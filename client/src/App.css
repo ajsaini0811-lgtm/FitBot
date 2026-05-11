@@ -1,0 +1,33 @@
+/* Top Nav */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gray-light);
+  box-shadow: var(--shadow);
+  height: var(--nav-height);
+}
+.top-nav-inner {
+  max-width: 1200px; margin: 0 auto; height: 100%;
+  display: flex; align-items: center; gap: 16px; padding: 0 20px;
+}
+.top-nav-logo {
+  font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--primary-dark); text-decoration: none; flex-shrink: 0; margin-right: 8px;
+}
+.top-nav-links { display: flex; gap: 4px; flex: 1; }
+.top-nav-right { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+.top-nav-link {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: var(--gray);
+  transition: var(--transition); text-decoration: none; cursor: pointer;
+  background: none; border: none; font-family: inherit;
+}
+.top-nav-link:hover, .top-nav-link.active { background: var(--primary-bg); color: var(--primary-dark); }
+
+/* Hide top nav on mobile — BottomNav takes over */
+@media (max-width: 768px) {
+  .top-nav-links, .top-nav-right { display: none; }
+  .top-nav-logo { font-size: 16px; }
+}

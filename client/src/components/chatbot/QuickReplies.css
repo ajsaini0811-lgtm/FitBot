@@ -1,0 +1,29 @@
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 12px;
+}
+
+.qr-chip {
+  padding: 8px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--primary);
+  border-radius: 20px;
+  color: var(--primary-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.qr-chip:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34,197,94,0.3);
+}
+.qr-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

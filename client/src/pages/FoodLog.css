@@ -1,0 +1,49 @@
+.foodlog-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.foodlog-header h1 { font-size: 22px; }
+
+.date-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; margin-bottom: 14px;
+}
+.date-nav-btn {
+  width: 36px; height: 36px; border-radius: 8px; font-size: 20px; font-weight: 700;
+  color: var(--gray); transition: var(--transition); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.date-nav-btn:hover:not(:disabled) { background: var(--bg-alt); color: var(--dark); }
+.date-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.date-nav-label { text-align: center; }
+.date-main { font-size: 16px; font-weight: 700; color: var(--dark); }
+.date-sub { font-size: 12px; color: var(--gray); }
+
+.calorie-summary {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 16px; margin-bottom: 12px; text-align: center;
+}
+.cal-item { flex: 1; }
+.cal-val { font-size: 26px; font-weight: 800; font-family: 'Poppins', sans-serif; color: var(--dark); }
+.cal-lbl { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.cal-divider { font-size: 20px; color: var(--gray-light); font-weight: 300; }
+
+.macro-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.macro-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.macro-chip.protein { background: rgba(59,130,246,0.1); color: var(--accent); }
+.macro-chip.carbs   { background: rgba(245,158,11,0.1); color: #92400e; }
+.macro-chip.fat     { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+.meal-section { margin-bottom: 20px; }
+.meal-title { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 8px; padding: 0 2px; }
+.meal-cal { font-size: 13px; color: var(--gray); font-weight: 500; }
+.meal-empty { font-size: 13px; color: var(--text-muted); padding: 10px 14px; background: var(--bg-alt); border-radius: 8px; }
+
+.food-entry {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.food-entry-info { flex: 1; min-width: 0; }
+.food-entry-name { font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.food-entry-meta { font-size: 12px; color: var(--gray); }
+.food-entry-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.food-kcal { font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+.del-btn { color: var(--gray); padding: 4px; border-radius: 6px; transition: var(--transition); cursor: pointer; }
+.del-btn:hover { color: var(--danger); background: rgba(239,68,68,0.08); }
