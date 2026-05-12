@@ -13,7 +13,11 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
+    const url = err.config?.url || '';
+    const isAuthRoute = url.includes('/auth/');
+    // Only force-logout on 401 for non-auth routes (token expired / revoked).
+    // Never redirect on a failed login attempt — let the page handle it.
+    if (err.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('fitbot_token');
       localStorage.removeItem('fitbot_user');
       window.location.href = '/login';
