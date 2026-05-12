@@ -87,7 +87,7 @@ function TopNav() {
           )}
         </nav>
         <div className="top-nav-right">
-          <NavLink to="/profile" className="top-nav-link"><FiUser size={15} /> Profile</NavLink>
+          <NavLink to={isCoach ? '/coach/profile' : '/profile'} className="top-nav-link"><FiUser size={15} /> Profile</NavLink>
           <button className="top-nav-link" onClick={logout} style={{ cursor: 'pointer' }}>
             <FiLogOut size={15} /> Sign Out
           </button>
@@ -142,6 +142,7 @@ export default function App() {
         <Route path="/profile"           element={<SetupRoute>{isCoach ? <CoachProfile /> : <Profile />}</SetupRoute>} />
 
         {/* Coach-only pages */}
+        <Route path="/coach/profile"           element={<CoachRoute><CoachProfile /></CoachRoute>} />
         <Route path="/coach"                   element={<CoachRoute><CoachDashboard /></CoachRoute>} />
         <Route path="/coach/client/:clientId"  element={<CoachRoute><CoachClientDetail /></CoachRoute>} />
         <Route path="/coach/chat/:clientId"    element={<CoachRoute><CoachChat /></CoachRoute>} />

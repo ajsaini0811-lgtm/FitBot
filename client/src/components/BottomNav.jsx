@@ -15,7 +15,7 @@ const COACH_TABS = [
   { to: '/coach',        icon: FiUsers,          label: 'Clients' },
   { to: '/coach/groups', icon: FiMessageCircle,  label: 'Groups' },
   { to: '/exercises',    icon: FiBook,           label: 'Exercises' },
-  { to: '/profile',      icon: FiUser,           label: 'Profile' },
+  { to: '/coach/profile', icon: FiUser,           label: 'Profile' },
 ];
 
 export default function BottomNav() {

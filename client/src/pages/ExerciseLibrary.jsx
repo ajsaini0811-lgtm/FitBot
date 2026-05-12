@@ -130,11 +130,18 @@ export default function ExerciseLibrary() {
           <p className="ex-lib-sub">{exercises.length} exercises with step-by-step instructions</p>
         </div>
         {isCoach && (
-          <button className="btn btn-primary btn-sm" onClick={() => setShowCreate(true)}>
-            <FiPlus size={15} /> Add Exercise
+          <button className="btn btn-primary" style={{ gap: 6, flexShrink: 0 }} onClick={() => setShowCreate(true)}>
+            <FiPlus size={16} /> Add Exercise
           </button>
         )}
       </div>
+
+      {/* Coach floating add button on mobile */}
+      {isCoach && (
+        <button className="ex-fab" onClick={() => setShowCreate(true)} title="Add Exercise">
+          <FiPlus size={24} />
+        </button>
+      )}
 
       {/* Search bar */}
       <div className="ex-search-row">
