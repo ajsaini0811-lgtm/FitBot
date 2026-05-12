@@ -63,6 +63,11 @@ model User {
   // Water intake logs
   waterLogs        WaterLog[]
 
+  // Coach groups
+  coachGroups      CoachGroup[]        @relation("CoachGroups")
+  groupMemberships CoachGroupMember[]  @relation("GroupMemberships")
+  groupMessages    CoachGroupMessage[] @relation("GroupMessages")
+
   // Check-in schedule: 0=Sun, 1=Mon, ..., 6=Sat. null = no schedule
   checkinDay       Int?
 
@@ -253,6 +258,40 @@ model CustomExercise {
   defaultSets  Int?
   defaultReps  String?
   createdAt    DateTime @default(now())
+}
+
+// ─── Coach Groups ─────────────────────────────────────────
+
+model CoachGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coachId     String
+  coach       User     @relation("CoachGroups", fields: [coachId], references: [id], onDelete: Cascade)
+  members     CoachGroupMember[]
+  messages    CoachGroupMessage[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CoachGroupMember {
+  id       String     @id @default(cuid())
+  groupId  String
+  group    CoachGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User       @relation("GroupMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime   @default(now())
+  @@unique([groupId, userId])
+}
+
+model CoachGroupMessage {
+  id        String     @id @default(cuid())
+  groupId   String
+  group     CoachGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User       @relation("GroupMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime   @default(now())
 }
 
 // ─── Coach ↔ User Messaging ───────────────────────────────

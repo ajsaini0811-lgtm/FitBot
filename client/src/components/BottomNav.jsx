@@ -1,19 +1,21 @@
 import { NavLink } from 'react-router-dom';
-import { FiMessageCircle, FiHome, FiList, FiTrendingUp, FiBook, FiUsers } from 'react-icons/fi';
+import { FiMessageCircle, FiHome, FiList, FiTrendingUp, FiBook, FiUsers, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import './BottomNav.css';
 
 const USER_TABS = [
   { to: '/chat',      icon: FiMessageCircle, label: 'Chat' },
   { to: '/dashboard', icon: FiHome,           label: 'Home' },
-  { to: '/exercises', icon: FiBook,           label: 'Exercises' },
   { to: '/food',      icon: FiList,           label: 'Food' },
+  { to: '/groups',    icon: FiUsers,          label: 'Groups' },
   { to: '/progress',  icon: FiTrendingUp,     label: 'Progress' },
 ];
 
 const COACH_TABS = [
-  { to: '/coach',     icon: FiUsers, label: 'Clients' },
-  { to: '/exercises', icon: FiBook,  label: 'Exercises' },
+  { to: '/coach',        icon: FiUsers,          label: 'Clients' },
+  { to: '/coach/groups', icon: FiMessageCircle,  label: 'Groups' },
+  { to: '/exercises',    icon: FiBook,           label: 'Exercises' },
+  { to: '/profile',      icon: FiUser,           label: 'Profile' },
 ];
 
 export default function BottomNav() {

@@ -20,6 +20,9 @@ import MyDiet          from './pages/MyDiet';
 import CoachDashboard  from './pages/CoachDashboard';
 import CoachClientDetail from './pages/CoachClientDetail';
 import CoachChat       from './pages/CoachChat';
+import CoachGroups     from './pages/CoachGroups';
+import CoachProfile    from './pages/CoachProfile';
+import GroupChat       from './pages/GroupChat';
 import UserCoachChat   from './pages/UserCoachChat';
 import ForgotPassword  from './pages/ForgotPassword';
 
@@ -44,8 +47,9 @@ const USER_NAV_TABS = [
 ];
 
 const COACH_NAV_TABS = [
-  { to: '/coach',       label: 'Clients',   icon: FiUsers },
-  { to: '/exercises',   label: 'Exercises', icon: FiBook },
+  { to: '/coach',        label: 'Clients',   icon: FiUsers },
+  { to: '/coach/groups', label: 'Groups',    icon: FiMessageCircle },
+  { to: '/exercises',    label: 'Exercises', icon: FiBook },
 ];
 
 function TopNav() {
@@ -67,6 +71,9 @@ function TopNav() {
           ))}
           {!isCoach && (
             <>
+              <NavLink to="/groups" className={({ isActive }) => `top-nav-link ${isActive ? 'active' : ''}`}>
+                <FiUsers size={15} /> Groups
+              </NavLink>
               <NavLink to="/my-plan" className={({ isActive }) => `top-nav-link ${isActive ? 'active' : ''}`}>
                 📋 My Plan
               </NavLink>
@@ -127,15 +134,19 @@ export default function App() {
         <Route path="/food"       element={<SetupRoute><FoodLog /></SetupRoute>} />
         <Route path="/workout"    element={<SetupRoute><WorkoutLog /></SetupRoute>} />
         <Route path="/progress"   element={<SetupRoute><Progress /></SetupRoute>} />
-        <Route path="/profile"    element={<SetupRoute><Profile /></SetupRoute>} />
         <Route path="/my-plan"    element={<SetupRoute><MyPlan /></SetupRoute>} />
         <Route path="/my-diet"    element={<SetupRoute><MyDiet /></SetupRoute>} />
         <Route path="/chat/coach" element={<SetupRoute><UserCoachChat /></SetupRoute>} />
+        <Route path="/groups"            element={<SetupRoute><CoachGroups /></SetupRoute>} />
+        <Route path="/groups/:groupId"   element={<SetupRoute><GroupChat /></SetupRoute>} />
+        <Route path="/profile"           element={<SetupRoute>{isCoach ? <CoachProfile /> : <Profile />}</SetupRoute>} />
 
         {/* Coach-only pages */}
         <Route path="/coach"                   element={<CoachRoute><CoachDashboard /></CoachRoute>} />
         <Route path="/coach/client/:clientId"  element={<CoachRoute><CoachClientDetail /></CoachRoute>} />
         <Route path="/coach/chat/:clientId"    element={<CoachRoute><CoachChat /></CoachRoute>} />
+        <Route path="/coach/groups"            element={<CoachRoute><CoachGroups /></CoachRoute>} />
+        <Route path="/coach/groups/:groupId"   element={<CoachRoute><GroupChat /></CoachRoute>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

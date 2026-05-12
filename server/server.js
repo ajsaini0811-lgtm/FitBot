@@ -21,6 +21,7 @@ const plansRoutes     = require('./src/routes/plans');
 const messagesRoutes  = require('./src/routes/messages');
 const waterRoutes          = require('./src/routes/water');
 const coachAnalyticsRoutes = require('./src/routes/coachAnalytics');
+const groupsRoutes         = require('./src/routes/groups');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -77,6 +78,7 @@ app.use('/api',           plansRoutes);   // /api/plan and /api/diet-plan
 app.use('/api/messages',  messagesRoutes);
 app.use('/api/water',          waterRoutes);
 app.use('/api/coach-analytics', coachAnalyticsRoutes);
+app.use('/api/groups',         groupsRoutes);
 
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok', app: 'FitBot' }));
@@ -141,6 +143,25 @@ io.on('connection', (socket) => {
       data: { read: true },
     }).catch(console.error);
     io.to(`user_${senderId}`).emit('messages_read', { by: socket.userId });
+  });
+
+  // Group chat — join room
+  socket.on('join_group', ({ groupId }) => {
+    socket.join(`group_${groupId}`);
+  });
+
+  // Group chat — send message
+  socket.on('send_group_message', async ({ groupId, content }) => {
+    try {
+      const msg = await prisma.coachGroupMessage.create({
+        data: { groupId, senderId: socket.userId, content },
+        include: { sender: { select: { id: true, name: true, role: true } } },
+      });
+      await prisma.coachGroup.update({ where: { id: groupId }, data: { updatedAt: new Date() } });
+      io.to(`group_${groupId}`).emit('group_message', msg);
+    } catch (err) {
+      socket.emit('error', { message: err.message });
+    }
   });
 
   socket.on('disconnect', () => {
