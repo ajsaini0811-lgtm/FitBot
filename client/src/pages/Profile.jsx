@@ -1,9 +1,17 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 import { calcBMR, calcTDEE, calcCalorieGoal, calcMacros, calcBMI, bmiCategory, activityLabel, goalLabel } from '../utils/calculations';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import './Profile.css';
+
+const TOOLS = [
+  { to: '/tdee',            emoji: '⚡', title: 'TDEE Calculator',      desc: 'Find your daily energy needs & macros' },
+  { to: '/measurements',   emoji: '📏', title: 'Body Measurements',     desc: 'Track waist, chest, arms & more' },
+  { to: '/progress-photos', emoji: '📸', title: 'Progress Photos',       desc: 'See your visual transformation' },
+  { to: '/progress',        emoji: '📈', title: 'Progress & Analytics',  desc: 'Charts, streaks & achievements' },
+];
 
 const ACTIVITY_OPTIONS = [
   { value: 'sedentary',   label: 'Sedentary' },
@@ -108,7 +116,23 @@ export default function Profile() {
   return (
     <div className="page-wrapper">
       <div className="page-content">
-        <h1 className="heading" style={{ marginBottom: 24 }}>My Profile</h1>
+        <h1 className="heading" style={{ marginBottom: 16 }}>My Profile</h1>
+
+        {/* Tools quick-access */}
+        <div className="card profile-section" style={{ marginBottom: 16 }}>
+          <h2 className="profile-section-title">🛠 Tools & Extras</h2>
+          <div className="profile-tools-grid">
+            {TOOLS.map(t => (
+              <Link key={t.to} to={t.to} className="profile-tool-card">
+                <span className="profile-tool-emoji">{t.emoji}</span>
+                <div>
+                  <div className="profile-tool-title">{t.title}</div>
+                  <div className="profile-tool-desc">{t.desc}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
 
         <form onSubmit={handleSave}>
           {/* Personal */}

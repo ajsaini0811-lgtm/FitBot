@@ -116,6 +116,14 @@ export default function Dashboard() {
             <span className="qa-icon">🏋️</span>
             <span>Workout Log</span>
           </Link>
+          <Link to="/measurements" className="card quick-action-card">
+            <span className="qa-icon">📏</span>
+            <span>Measurements</span>
+          </Link>
+          <Link to="/tdee" className="card quick-action-card">
+            <span className="qa-icon">⚡</span>
+            <span>TDEE Calculator</span>
+          </Link>
         </div>
       </div>
     </div>

@@ -22,6 +22,12 @@ const messagesRoutes  = require('./src/routes/messages');
 const waterRoutes          = require('./src/routes/water');
 const coachAnalyticsRoutes = require('./src/routes/coachAnalytics');
 const groupsRoutes         = require('./src/routes/groups');
+const measurementsRoutes    = require('./src/routes/measurements');
+const notificationsRoutes   = require('./src/routes/notifications');
+const workoutTemplatesRoutes = require('./src/routes/workoutTemplates');
+const bookingsRoutes        = require('./src/routes/bookings');
+const clientNotesRoutes     = require('./src/routes/clientNotes');
+const progressPhotosRoutes  = require('./src/routes/progressPhotos');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -79,6 +85,12 @@ app.use('/api/messages',  messagesRoutes);
 app.use('/api/water',          waterRoutes);
 app.use('/api/coach-analytics', coachAnalyticsRoutes);
 app.use('/api/groups',         groupsRoutes);
+app.use('/api/measurements',       measurementsRoutes);
+app.use('/api/notifications',      notificationsRoutes);
+app.use('/api/workout-templates',  workoutTemplatesRoutes);
+app.use('/api/bookings',           bookingsRoutes);
+app.use('/api/client-notes',       clientNotesRoutes);
+app.use('/api/progress-photos',    progressPhotosRoutes);
 
 // Health check
 app.get('/health', (_, res) => res.json({ status: 'ok', app: 'FitBot' }));

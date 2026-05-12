@@ -71,6 +71,15 @@ model User {
   // Check-in schedule: 0=Sun, 1=Mon, ..., 6=Sat. null = no schedule
   checkinDay       Int?
 
+  bodyMeasurements  BodyMeasurement[]
+  coachNotes        ClientNote[]       @relation("CoachNotes")
+  clientNotes       ClientNote[]       @relation("ClientNotes")
+  progressPhotos    ProgressPhoto[]
+  notifications     Notification[]
+  workoutTemplates  WorkoutTemplate[]
+  clientBookings    SessionBooking[]   @relation("ClientBookings")
+  coachBookings     SessionBooking[]   @relation("CoachBookings")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -306,4 +315,100 @@ model CoachMessage {
   imageUrl   String?
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
+}
+
+// ─── Body Measurements ────────────────────────────────────
+
+model BodyMeasurement {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  waistCm   Float?
+  chestCm   Float?
+  hipsCm    Float?
+  armsCm    Float?
+  thighsCm  Float?
+  noteText  String?
+  createdAt DateTime @default(now())
+}
+
+// ─── Client Notes (Coach → Client) ───────────────────────
+
+model ClientNote {
+  id        String   @id @default(cuid())
+  coachId   String
+  coach     User     @relation("CoachNotes", fields: [coachId], references: [id], onDelete: Cascade)
+  clientId  String
+  client    User     @relation("ClientNotes", fields: [clientId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Progress Photos ──────────────────────────────────────
+
+model ProgressPhoto {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  caption   String?
+  takenAt   DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+// ─── Notifications ────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "message" | "plan_assigned" | "diet_assigned" | "coach_note" | "reminder"
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  link      String?  // optional deep-link route e.g. "/my-plan"
+  createdAt DateTime @default(now())
+}
+
+// ─── Workout Templates ────────────────────────────────────
+
+model WorkoutTemplate {
+  id        String                   @id @default(cuid())
+  userId    String
+  user      User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  exercises WorkoutTemplateExercise[]
+  createdAt DateTime @default(now())
+}
+
+model WorkoutTemplateExercise {
+  id          String          @id @default(cuid())
+  templateId  String
+  template    WorkoutTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  name        String
+  category    String
+  sets        Int?
+  reps        Int?
+  weightKg    Float?
+  durationMin Int?
+  order       Int             @default(0)
+}
+
+// ─── Session Bookings ─────────────────────────────────────
+
+model SessionBooking {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      User     @relation("ClientBookings", fields: [clientId], references: [id], onDelete: Cascade)
+  coachId     String
+  coach       User     @relation("CoachBookings", fields: [coachId], references: [id], onDelete: Cascade)
+  requestedAt DateTime
+  durationMin Int      @default(60)
+  topic       String?
+  status      String   @default("pending") // "pending" | "confirmed" | "rejected" | "cancelled"
+  coachNote   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

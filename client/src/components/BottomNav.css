@@ -2,32 +2,68 @@
   display: none;
   position: fixed;
   bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.07);
   height: var(--bottom-nav-h);
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid var(--gray-light);
-  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
-  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0px);
   justify-content: space-around;
-  align-items: flex-start;
-  padding: 8px 4px 0;
+  align-items: center;
 }
 
 .bottom-nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   flex: 1;
-  min-height: 44px;
-  padding: 4px 4px;
-  color: var(--gray); font-size: 11px; font-weight: 600;
-  transition: color 0.15s; text-decoration: none; border-radius: 10px;
+  height: 100%;
+  padding: 4px 2px;
+  color: #9ca3af;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: color 0.15s;
+  text-decoration: none;
+  border-radius: 0;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
-.bottom-nav-item:hover, .bottom-nav-item.active {
-  color: var(--primary);
-}
-.bottom-nav-item.active svg { stroke-width: 2.5; }
 
-@media (max-width: 768px) {
+.bottom-nav-item svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+  color: #22c55e;
+}
+
+/* Active indicator dot above icon */
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 3px;
+  background: #22c55e;
+  border-radius: 0 0 4px 4px;
+}
+
+.bottom-nav-item.active svg {
+  stroke-width: 2.5;
+}
+
+@media (max-width: 900px) {
   .bottom-nav { display: flex; }
 }

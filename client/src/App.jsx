@@ -3,30 +3,35 @@ import { useAuth } from './context/AuthContext';
 import { AuthRoute, SetupRoute } from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import BottomNav from './components/BottomNav';
+import NotificationBell from './components/NotificationBell';
 
-import Landing         from './pages/Landing';
-import LoginPage       from './pages/LoginPage';
-import RegisterPage    from './pages/RegisterPage';
-import Setup           from './pages/Setup';
-import Chat            from './pages/Chat';
-import Dashboard       from './pages/Dashboard';
-import FoodLog         from './pages/FoodLog';
-import WorkoutLog      from './pages/WorkoutLog';
-import Progress        from './pages/Progress';
-import Profile         from './pages/Profile';
-import ExerciseLibrary from './pages/ExerciseLibrary';
-import MyPlan          from './pages/MyPlan';
-import MyDiet          from './pages/MyDiet';
-import CoachDashboard  from './pages/CoachDashboard';
+import Landing           from './pages/Landing';
+import LoginPage         from './pages/LoginPage';
+import RegisterPage      from './pages/RegisterPage';
+import Setup             from './pages/Setup';
+import Chat              from './pages/Chat';
+import Dashboard         from './pages/Dashboard';
+import FoodLog           from './pages/FoodLog';
+import WorkoutLog        from './pages/WorkoutLog';
+import Progress          from './pages/Progress';
+import Profile           from './pages/Profile';
+import ExerciseLibrary   from './pages/ExerciseLibrary';
+import MyPlan            from './pages/MyPlan';
+import MyDiet            from './pages/MyDiet';
+import CoachDashboard    from './pages/CoachDashboard';
 import CoachClientDetail from './pages/CoachClientDetail';
-import CoachChat       from './pages/CoachChat';
-import CoachGroups     from './pages/CoachGroups';
-import CoachProfile    from './pages/CoachProfile';
-import GroupChat       from './pages/GroupChat';
-import UserCoachChat   from './pages/UserCoachChat';
-import ForgotPassword  from './pages/ForgotPassword';
+import CoachChat         from './pages/CoachChat';
+import CoachGroups       from './pages/CoachGroups';
+import CoachProfile      from './pages/CoachProfile';
+import GroupChat         from './pages/GroupChat';
+import UserCoachChat     from './pages/UserCoachChat';
+import ForgotPassword    from './pages/ForgotPassword';
+import TDEECalculator    from './pages/TDEECalculator';
+import BodyMeasurements  from './pages/BodyMeasurements';
+import ProgressPhotos    from './pages/ProgressPhotos';
 
-import { FiMessageCircle, FiHome, FiList, FiActivity, FiTrendingUp, FiUser, FiLogOut, FiBook, FiUsers } from 'react-icons/fi';
+import { FiMessageCircle, FiHome, FiList, FiActivity, FiTrendingUp, FiUser, FiLogOut, FiBook, FiUsers, FiMoon, FiSun } from 'react-icons/fi';
+import { useTheme } from './context/ThemeContext';
 import './App.css';
 
 // Route guard for coach-only pages
@@ -54,6 +59,7 @@ const COACH_NAV_TABS = [
 
 function TopNav() {
   const { user, logout } = useAuth();
+  const { dark, toggle } = useTheme();
   if (!user || !user.setupDone) return null;
 
   const isCoach = user.role === 'COACH';
@@ -87,6 +93,10 @@ function TopNav() {
           )}
         </nav>
         <div className="top-nav-right">
+          <NotificationBell />
+          <button className="top-nav-link" onClick={toggle} title="Toggle dark mode" style={{ cursor: 'pointer' }}>
+            {dark ? <FiSun size={15} /> : <FiMoon size={15} />}
+          </button>
           <NavLink to={isCoach ? '/coach/profile' : '/profile'} className="top-nav-link"><FiUser size={15} /> Profile</NavLink>
           <button className="top-nav-link" onClick={logout} style={{ cursor: 'pointer' }}>
             <FiLogOut size={15} /> Sign Out
@@ -137,9 +147,12 @@ export default function App() {
         <Route path="/my-plan"    element={<SetupRoute><MyPlan /></SetupRoute>} />
         <Route path="/my-diet"    element={<SetupRoute><MyDiet /></SetupRoute>} />
         <Route path="/chat/coach" element={<SetupRoute><UserCoachChat /></SetupRoute>} />
-        <Route path="/groups"            element={<SetupRoute><CoachGroups /></SetupRoute>} />
-        <Route path="/groups/:groupId"   element={<SetupRoute><GroupChat /></SetupRoute>} />
-        <Route path="/profile"           element={<SetupRoute>{isCoach ? <CoachProfile /> : <Profile />}</SetupRoute>} />
+        <Route path="/groups"             element={<SetupRoute><CoachGroups /></SetupRoute>} />
+        <Route path="/groups/:groupId"  element={<SetupRoute><GroupChat /></SetupRoute>} />
+        <Route path="/profile"          element={<SetupRoute>{isCoach ? <CoachProfile /> : <Profile />}</SetupRoute>} />
+        <Route path="/tdee"             element={<SetupRoute><TDEECalculator /></SetupRoute>} />
+        <Route path="/measurements"     element={<SetupRoute><BodyMeasurements /></SetupRoute>} />
+        <Route path="/progress-photos"  element={<SetupRoute><ProgressPhotos /></SetupRoute>} />
 
         {/* Coach-only pages */}
         <Route path="/coach/profile"           element={<CoachRoute><CoachProfile /></CoachRoute>} />

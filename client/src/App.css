@@ -26,8 +26,9 @@
 }
 .top-nav-link:hover, .top-nav-link.active { background: var(--primary-bg); color: var(--primary-dark); }
 
-/* Hide top nav on mobile — BottomNav takes over */
-@media (max-width: 768px) {
+/* Hide top nav links on mobile — BottomNav takes over */
+@media (max-width: 900px) {
   .top-nav-links, .top-nav-right { display: none; }
-  .top-nav-logo { font-size: 16px; }
+  .top-nav-logo { font-size: 15px; }
+  .top-nav-inner { padding: 0 16px; }
 }

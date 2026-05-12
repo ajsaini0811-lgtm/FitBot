@@ -1,6 +1,49 @@
 .profile-section { padding: 20px; margin-bottom: 16px; }
 .profile-section-title { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-light); }
 
+/* Tools quick-access */
+.profile-tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.profile-tool-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gray-light);
+  border-radius: 12px;
+  background: var(--bg);
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.profile-tool-card:hover {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+}
+
+.profile-tool-emoji { font-size: 22px; flex-shrink: 0; }
+
+.profile-tool-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.profile-tool-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+  .profile-tools-grid { grid-template-columns: 1fr; }
+}
+
 .bmi-display { font-size: 14px; color: var(--gray); margin-top: 8px; display: flex; align-items: center; }
 
 .calorie-preview {

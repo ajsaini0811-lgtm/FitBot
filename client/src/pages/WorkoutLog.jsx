@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiTrash2, FiMessageCircle } from 'react-icons/fi';
+import { FiTrash2, FiMessageCircle, FiClock } from 'react-icons/fi';
 import { format, subDays, addDays } from 'date-fns';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
+import RestTimer from '../components/RestTimer';
 import './WorkoutLog.css';
 
 const CAT_EMOJI = { strength: '💪', cardio: '🏃', flexibility: '🧘' };
@@ -14,6 +15,7 @@ export default function WorkoutLog() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState('today');
+  const [showTimer, setShowTimer] = useState(false);
 
   const dateStr = format(date, 'yyyy-MM-dd');
   const isToday = dateStr === format(new Date(), 'yyyy-MM-dd');
@@ -51,8 +53,15 @@ export default function WorkoutLog() {
       <div className="page-content">
         <div className="wl-header">
           <h1 className="heading">Workout Log</h1>
-          <Link to="/chat" className="btn btn-primary btn-sm"><FiMessageCircle size={14} /> Log via Chat</Link>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-outline btn-sm" onClick={() => setShowTimer(true)} title="Rest Timer">
+              <FiClock size={14} /> Rest Timer
+            </button>
+            <Link to="/chat" className="btn btn-primary btn-sm"><FiMessageCircle size={14} /> Log via Chat</Link>
+          </div>
         </div>
+
+        {showTimer && <RestTimer onClose={() => setShowTimer(false)} />}
 
         {/* Tabs */}
         <div className="wl-tabs">

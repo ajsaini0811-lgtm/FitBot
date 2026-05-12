@@ -36,6 +36,34 @@
   --bottom-nav-h:  64px;
 }
 
+/* ─── Dark Mode ─────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:         #0f172a;
+  --bg-alt:     #1e293b;
+  --white:      #1e293b;
+  --dark:       #f1f5f9;
+  --gray:       #94a3b8;
+  --gray-light: #334155;
+  --text:       #f1f5f9;
+  --text-muted: #64748b;
+  --primary-bg: #052e16;
+  --accent-bg:  #172554;
+  --shadow:     0 4px 24px rgba(0,0,0,0.3);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,0.4);
+}
+
+[data-theme="dark"] body { background: #0f172a; color: #f1f5f9; }
+[data-theme="dark"] .card,
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .top-nav,
+[data-theme="dark"] .bottom-nav { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .bottom-nav { background: rgba(30,41,59,0.97); }
+[data-theme="dark"] .form-input { color: #f1f5f9; }
+[data-theme="dark"] .form-input::placeholder { color: #64748b; }
+[data-theme="dark"] .top-nav-logo { color: #4ade80; }
+[data-theme="dark"] .auth-page { background: linear-gradient(135deg,#0f172a,#1e293b,#0f172a); }
+[data-theme="dark"] .auth-card { background: #1e293b; }
+
 /* ─── Reset ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -161,24 +189,31 @@ input, textarea, select { font-family: inherit; }
 
 /* ─── Mobile / PWA polish ───────────────────────────────── */
 /* Safe area insets for notched iPhones & Android */
-@supports (padding: env(safe-area-inset-bottom)) {
-  .page-wrapper {
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
+}
+
+.top-nav {
+  padding-top: env(safe-area-inset-top, 0px);
+  height: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+}
+
+.page-wrapper {
+  padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+}
+
+@media (max-width: 900px) {
+  .page-wrapper { padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px)); }
+  .page-content { padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 24px); }
+  /* Hide desktop top nav links, only show logo */
+  .top-nav-links, .top-nav-right { display: none !important; }
+  /* Custom page layouts that don't use page-wrapper */
+  .cd-page, .el-page {
     padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 16px);
   }
-
-  .page-content {
-    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px) + 24px);
-  }
-
-  .bottom-nav {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom, 0px));
-  }
-
-  .top-nav {
-    padding-top: env(safe-area-inset-top, 0px);
-    height: calc(var(--nav-height) + env(safe-area-inset-top, 0px));
-  }
+  .gc-page { padding-top: calc(var(--nav-height) + env(safe-area-inset-top, 0px)); }
 }
 
 /* Touch targets — minimum 44×44px for all interactive elements */

@@ -7,8 +7,8 @@ const USER_TABS = [
   { to: '/chat',      icon: FiMessageCircle, label: 'Chat' },
   { to: '/dashboard', icon: FiHome,           label: 'Home' },
   { to: '/food',      icon: FiList,           label: 'Food' },
-  { to: '/groups',    icon: FiUsers,          label: 'Groups' },
   { to: '/progress',  icon: FiTrendingUp,     label: 'Progress' },
+  { to: '/profile',   icon: FiUser,           label: 'Profile' },
 ];
 
 const COACH_TABS = [
