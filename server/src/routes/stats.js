@@ -145,8 +145,9 @@ router.get('/meal-suggestions', requireAuth, async (req, res) => {
     const proteinGoal = req.user.proteinGoalG || 150;
 
     res.json(suggest({
-      remainingCal: budget - consumed,
+      remainingCal:     budget - consumed,
       remainingProtein: proteinGoal - consumedProtein,
+      goal:             req.user.goal || 'maintain',
     }));
   } catch (err) {
     res.status(500).json({ error: err.message });
