@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { requireAuth } = require('../middleware/auth');
+const { estimateNutrition } = require('../utils/foodEstimator');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -51,6 +52,18 @@ router.post('/', requireAuth, async (req, res) => {
     res.status(201).json(log);
   } catch (err) {
     res.status(500).json({ error: 'Failed to log food: ' + err.message });
+  }
+});
+
+// POST /api/food/estimate — estimate nutrition for any food
+router.post('/estimate', requireAuth, (req, res) => {
+  try {
+    const { foodName, grams, cookingMethod } = req.body;
+    if (!foodName || !grams) return res.status(400).json({ error: 'foodName and grams are required' });
+    const result = estimateNutrition(String(foodName), Number(grams), cookingMethod || 'cooked');
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'Estimation failed: ' + err.message });
   }
 });
 

@@ -117,8 +117,47 @@ export default function Chat() {
         }
         setBotState(result.newState);
 
-        // If this is SHOW_SUMMARY, fetch stats
-        if (result.apiSuccessState === 'SUMMARY_DONE') {
+        // ── SHOW_ESTIMATE: food estimation API call ──────────
+        if (result.apiSuccessState === 'SHOW_ESTIMATE') {
+          try {
+            const estimateData = await result.pendingApiCall(api);
+            const { foodName, grams, displayMethod, mealType } = result.estimateContext;
+            const { calories, proteinG, carbsG, fatG } = estimateData;
+
+            const confirmText =
+              `📋 Here's my estimate for **${grams}g of ${foodName}** (${displayMethod}):\n\n` +
+              `🔥 ${calories} kcal\n` +
+              `🥩 Protein: ${proteinG}g\n` +
+              `🍚 Carbs: ${carbsG}g\n` +
+              `🫒 Fat: ${fatG}g\n\n` +
+              `Shall I log this for your ${mealType}?\n` +
+              `_(These are approximate — actual values may vary by recipe)_`;
+
+            const confirmReplies = ['✅ Yes, log it!', '✏️ Change amount', '🔍 Search different food'];
+            const confirmState = {
+              ...result.newState,
+              name: 'CONFIRM_ESTIMATED_FOOD',
+              pendingFood: { foodName, grams, calories, proteinG, carbsG, fatG },
+              mealType,
+            };
+
+            setIsTyping(true);
+            await new Promise(r => setTimeout(r, 700));
+            setIsTyping(false);
+            const confirmMsg = { id: Date.now(), role: 'bot', content: confirmText, quickReplies: confirmReplies };
+            setMessages(prev => [...prev, confirmMsg]);
+            api.post('/chat', { role: 'bot', content: confirmText, metadata: { quickReplies: confirmReplies } }).catch(() => {});
+            setCurrentReplies(confirmReplies);
+            setBotState(confirmState);
+          } catch {
+            await applyBotMessages(
+              [{ role: 'bot', content: 'Sorry, I couldn\'t estimate that food. Try typing a different name?', quickReplies: ['🔄 Back to Menu'] }],
+              { ...result.newState, name: 'MAIN_MENU' }
+            );
+          }
+
+        // ── SUMMARY_DONE ──────────────────────────────────────
+        } else if (result.apiSuccessState === 'SUMMARY_DONE') {
           try {
             const statsData = await result.pendingApiCall(api);
             const summaryText = buildSummaryMessage(statsData, user?.name);
@@ -138,8 +177,9 @@ export default function Chat() {
               { ...result.newState, name: 'MAIN_MENU' }
             );
           }
+
+        // ── Regular API call (log food, log workout, log weight) ─
         } else {
-          // Regular API call (log food, log workout, log weight)
           try {
             await result.pendingApiCall(api);
             refreshTodayStats();
