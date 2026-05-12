@@ -7,18 +7,29 @@ import './AuthPage.css';
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm]     = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError]   = useState('');
+  const [shake, setShake]   = useState(false);
+
+  const handleChange = (k, v) => {
+    setError('');
+    setForm(f => ({ ...f, [k]: v }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
       const user = await login(form.email, form.password);
       toast.success(`Welcome back, ${user.name.split(' ')[0]}! 💪`);
-      navigate(user.setupDone ? '/chat' : '/setup', { replace: true });
+      navigate(user.setupDone ? (user.role === 'COACH' ? '/coach' : '/chat') : '/setup', { replace: true });
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Login failed');
+      const msg = err.response?.data?.error || 'Incorrect email or password';
+      setError(msg);
+      setShake(true);
+      setTimeout(() => setShake(false), 600);
     } finally {
       setLoading(false);
     }
@@ -36,18 +47,34 @@ export default function LoginPage() {
         <h2 className="auth-title">Welcome back!</h2>
         <p className="auth-subtitle">Sign in to track your fitness journey</p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={shake ? 'auth-shake' : ''}>
           <div className="form-group">
             <label className="form-label">Email</label>
-            <input className="form-input" type="email" placeholder="you@example.com" required
-              value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+            <input
+              className={`form-input ${error ? 'input-error' : ''}`}
+              type="email" placeholder="you@example.com" required
+              value={form.email} onChange={e => handleChange('email', e.target.value)}
+            />
           </div>
           <div className="form-group">
             <label className="form-label">Password</label>
-            <input className="form-input" type="password" placeholder="••••••••" required
-              value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+            <input
+              className={`form-input ${error ? 'input-error' : ''}`}
+              type="password" placeholder="••••••••" required
+              value={form.password} onChange={e => handleChange('password', e.target.value)}
+            />
           </div>
-          <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: 8 }} disabled={loading}>
+
+          {/* Inline error banner */}
+          {error && (
+            <div className="auth-error-banner">
+              <span className="auth-error-icon">⚠️</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          <button type="submit" className="btn btn-primary btn-lg"
+            style={{ width: '100%', marginTop: error ? 12 : 8 }} disabled={loading}>
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>

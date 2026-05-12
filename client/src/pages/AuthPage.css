@@ -58,6 +58,52 @@
 }
 .otp-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
 
+/* ── Inline error banner ── */
+.auth-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #b91c1c;
+  margin-top: 12px;
+  animation: fadeInDown 0.2s ease;
+}
+
+.auth-error-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Red border on inputs when error */
+.input-error {
+  border-color: #f87171 !important;
+  background: #fff8f8 !important;
+}
+.input-error:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+}
+
+/* Shake animation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-6px); }
+  30%       { transform: translateX(6px); }
+  45%       { transform: translateX(-4px); }
+  60%       { transform: translateX(4px); }
+  75%       { transform: translateX(-2px); }
+  90%       { transform: translateX(2px); }
+}
+
+.auth-shake { animation: shake 0.55s ease; }
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 @media (max-width: 480px) {
   .auth-card { padding: 28px 20px; }
   .otp-input { width: 42px; height: 50px; font-size: 20px; }
