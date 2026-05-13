@@ -8,6 +8,30 @@ const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 
+// Prisma client with connection retry for Neon cold starts
+const prismaClientSingleton = () => new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+  datasourceUrl: process.env.DATABASE_URL,
+});
+
+global.prisma = global.prisma || prismaClientSingleton();
+const prisma = global.prisma;
+
+// Warm up DB connection on startup with retries
+async function connectWithRetry(attempts = 5, delayMs = 2000) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await prisma.$connect();
+      console.log('✅ Database connected');
+      return;
+    } catch (err) {
+      console.warn(`⚠️  DB connect attempt ${i}/${attempts} failed: ${err.message}`);
+      if (i < attempts) await new Promise(r => setTimeout(r, delayMs * i));
+    }
+  }
+  console.error('❌ Could not connect to database after retries — continuing anyway');
+}
+
 const authRoutes      = require('./src/routes/auth');
 const profileRoutes   = require('./src/routes/profile');
 const foodRoutes      = require('./src/routes/food');
@@ -186,4 +210,6 @@ require('./src/utils/reminderJob');
 
 // ── Start ─────────────────────────────────────────────────
 const PORT = process.env.PORT || 4000;
-httpServer.listen(PORT, () => console.log(`🏋️ FitBot server running on port ${PORT}`));
+connectWithRetry().then(() => {
+  httpServer.listen(PORT, () => console.log(`🏋️ FitBot server running on port ${PORT}`));
+});
