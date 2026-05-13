@@ -86,6 +86,24 @@ export function getInitialState() {
 export function transition(state, input, userData = {}) {
   const name = userData.name ? userData.name.split(' ')[0] : 'there';
 
+  // ── Global exit / goodbye — works from ANY state ──────────
+  const exitCheck = input.toLowerCase().trim();
+  if (
+    exitCheck === 'exit' || exitCheck === 'quit' || exitCheck === 'bye' ||
+    exitCheck === 'goodbye' || exitCheck === 'done' || exitCheck === 'stop' ||
+    exitCheck === 'see you' || exitCheck === 'thanks bye' || exitCheck === 'ok bye'
+  ) {
+    return {
+      newState: getInitialState(),
+      botMessages: [
+        bot(
+          `Thanks ${name}, see you soon! 👋\n\nKeep up the great work — consistency is the key to results! 💪\n\nCome back anytime to log meals, workouts, or check your progress.`,
+          ['🍽️ Log a Meal', '🏋️ Log Workout', '📊 Today\'s Summary', '⚖️ Update Weight']
+        ),
+      ],
+    };
+  }
+
   switch (state.name) {
 
     // ── IDLE → auto-welcome ──────────────────────────────────
