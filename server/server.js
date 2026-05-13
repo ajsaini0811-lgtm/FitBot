@@ -53,7 +53,6 @@ const bookingsRoutes        = require('./src/routes/bookings');
 const clientNotesRoutes     = require('./src/routes/clientNotes');
 const progressPhotosRoutes  = require('./src/routes/progressPhotos');
 
-const prisma = new PrismaClient();
 const app = express();
 const httpServer = createServer(app);
 
