@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const auth = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 const requireCoach = require('../middleware/requireCoach');
 
-router.use(auth, requireCoach);
+router.use(requireAuth, requireCoach);
 
 // GET notes for a client
 router.get('/:clientId', async (req, res) => {

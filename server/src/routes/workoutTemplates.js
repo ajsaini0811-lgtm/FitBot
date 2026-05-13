@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const auth = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 
-router.use(auth);
+router.use(requireAuth);
 
 // GET all templates
 router.get('/', async (req, res) => {
