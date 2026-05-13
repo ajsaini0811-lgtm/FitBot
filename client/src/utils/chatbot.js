@@ -161,6 +161,32 @@ export function transition(state, input, userData = {}) {
 
     // ── FOOD SEARCH ──────────────────────────────────────────
     case 'SEARCH_FOOD': {
+      // ── Escape-intent detection: user changed their mind ──
+      const esc = input.toLowerCase();
+      if (
+        esc.includes('workout') || esc.includes('exercise') ||
+        esc.includes('gym') || esc.includes('log workout') || esc.includes('training')
+      ) {
+        return {
+          newState: { ...state, name: 'SELECT_EXERCISE_TYPE' },
+          botMessages: [
+            bot('Switching to workout logging! 🏋️\n\nWhat type of workout?', ['💪 Strength Training', '🏃 Cardio', '🧘 Flexibility / Yoga']),
+          ],
+        };
+      }
+      if (esc.includes('menu') || esc.includes('back') || esc.includes('cancel') || esc.includes('home')) {
+        return {
+          newState: { ...state, name: 'MAIN_MENU' },
+          botMessages: [bot('No problem! What would you like to do?', ['🍽️ Log a Meal', '🏋️ Log Workout', '📊 Today\'s Summary', '⚖️ Update Weight'])],
+        };
+      }
+      if (esc.includes('summary') || esc.includes('today')) {
+        return transition({ ...state, name: 'MAIN_MENU' }, '📊 Today\'s Summary', userData);
+      }
+      if ((esc.includes('weight') || esc.includes('log weight')) && !esc.includes('g') && !esc.includes('gram')) {
+        return transition({ ...state, name: 'MAIN_MENU' }, '⚖️ Update Weight', userData);
+      }
+
       const results = searchFoods(input);
 
       // ── FOUND in local DB ─────────────────────────────────
@@ -221,6 +247,19 @@ export function transition(state, input, userData = {}) {
 
     // ── ASK GRAMS (both known & unknown foods) ────────────────
     case 'ASK_GRAMS': {
+      const escG = input.toLowerCase();
+      if (escG.includes('workout') || escG.includes('exercise') || escG.includes('gym') || escG.includes('training')) {
+        return {
+          newState: { ...state, name: 'SELECT_EXERCISE_TYPE' },
+          botMessages: [bot('Switching to workout logging! 🏋️\n\nWhat type of workout?', ['💪 Strength Training', '🏃 Cardio', '🧘 Flexibility / Yoga'])],
+        };
+      }
+      if (escG.includes('cancel') || escG.includes('back') || escG.includes('menu') || escG.includes('home')) {
+        return {
+          newState: { ...state, name: 'MAIN_MENU' },
+          botMessages: [bot('No problem! What would you like to do?', ['🍽️ Log a Meal', '🏋️ Log Workout', '📊 Today\'s Summary', '⚖️ Update Weight'])],
+        };
+      }
       const grams = parseNumber(input);
       if (!grams || grams <= 0 || grams > 5000) {
         return {
