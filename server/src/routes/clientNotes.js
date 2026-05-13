@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { requireAuth } = require('../middleware/auth');
-const requireCoach = require('../middleware/requireCoach');
+const { requireCoach } = require('../middleware/requireCoach');
 
 router.use(requireAuth, requireCoach);
 
