@@ -106,16 +106,18 @@ export function transition(state, input, userData = {}) {
     // ── MAIN_MENU ────────────────────────────────────────────
     case 'MAIN_MENU': {
       const i = input.toLowerCase();
+      // Check workout FIRST — "Log Workout" contains "log" which would
+      // otherwise match the meal check below
+      if (i.includes('workout') || i.includes('exercise') || i.includes('gym') || i.includes('training') || i.includes('🏋')) {
+        return {
+          newState: { ...state, name: 'SELECT_EXERCISE_TYPE' },
+          botMessages: [bot('Let\'s log your workout! What type?', ['💪 Strength Training', '🏃 Cardio', '🧘 Flexibility / Yoga'])],
+        };
+      }
       if (i.includes('meal') || i.includes('food') || i.includes('eat') || i.includes('log') || i.includes('🍽')) {
         return {
           newState: { ...state, name: 'SELECT_MEAL_TYPE' },
           botMessages: [bot('Which meal are you logging?', ['☀️ Breakfast', '🌤️ Lunch', '🌙 Dinner', '🍎 Snack'])],
-        };
-      }
-      if (i.includes('workout') || i.includes('exercise') || i.includes('gym') || i.includes('🏋')) {
-        return {
-          newState: { ...state, name: 'SELECT_EXERCISE_TYPE' },
-          botMessages: [bot('Let\'s log your workout! What type?', ['💪 Strength Training', '🏃 Cardio', '🧘 Flexibility / Yoga'])],
         };
       }
       if (i.includes('summary') || i.includes('today') || i.includes('📊')) {
